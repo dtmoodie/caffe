@@ -3,8 +3,12 @@
 This is a fork of caffe designed to support embedding in applications on windows.
 Changes found in this fork:
 
-Windows support through cmake builds.
-Export declarations to allow shared library building.
-Checks throw exceptions instead of aborting your application.
-Boost log is used in place of glog.
-Boost program_options used in place of gflags.
+1) Windows support through cmake builds.
+
+2) Export declarations to allow shared library building.
+
+3) Checks throw exceptions instead of aborting your application.
+
+4) Boost log is used in place of glog.
+
+5) Boost program_options used in place of gflags.
