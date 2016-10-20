@@ -25,7 +25,7 @@ DataTransformer<Dtype>::DataTransformer(const TransformationParameter& param,
       "Cannot specify mean_file and mean_value at the same time";
     const string& mean_file = param.mean_file();
     if (Caffe::root_solver()) {
-      LOG(info) << "Loading mean file from: " << mean_file;
+      LOG(INFO) << "Loading mean file from: " << mean_file;
     }
     BlobProto blob_proto;
     ReadProtoFromBinaryFileOrDie(mean_file.c_str(), &blob_proto);
@@ -165,11 +165,11 @@ void DataTransformer<Dtype>::Transform(const Datum& datum,
     // Transform the cv::image into blob.
     return Transform(cv_img, transformed_blob, crop_bbox, do_mirror);
 #else
-    LOG(fatal) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
+    LOG(FATAL) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   } else {
     if (param_.force_color() || param_.force_gray()) {
-      LOG(error) << "force_color and force_gray only for encoded datum";
+      LOG(ERROR) << "force_color and force_gray only for encoded datum";
     }
   }
 
@@ -315,7 +315,7 @@ void DataTransformer<Dtype>::TransformAnnotation(
       }
     }
   } else {
-    LOG(fatal) << "Unknown annotation type.";
+    LOG(FATAL) << "Unknown annotation type.";
   }
 }
 
@@ -343,11 +343,11 @@ void DataTransformer<Dtype>::CropImage(const Datum& datum,
     crop_datum->set_label(datum.label());
     return;
 #else
-    LOG(error) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
+    LOG(ERROR) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   } else {
     if (param_.force_color() || param_.force_gray()) {
-      LOG(error) << "force_color and force_gray only for encoded datum";
+      LOG(ERROR) << "force_color and force_gray only for encoded datum";
     }
   }
 
@@ -770,7 +770,7 @@ void DataTransformer<Dtype>::Transform(Blob<Dtype>* input_blob,
     }
   }
   if (scale != Dtype(1)) {
-    DLOG(info) << "Scale: " << scale;
+    DLOG(INFO) << "Scale: " << scale;
     caffe_scal(size, scale, transformed_data);
   }
 }
@@ -791,7 +791,7 @@ vector<int> DataTransformer<Dtype>::InferBlobShape(const Datum& datum) {
     // InferBlobShape using the cv::image.
     return InferBlobShape(cv_img);
 #else
-    LOG(fatal) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
+    LOG(FATAL) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   }
 

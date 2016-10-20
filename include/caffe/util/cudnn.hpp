@@ -102,7 +102,7 @@ inline void createPoolingDesc(cudnnPoolingDescriptor_t* pool_desc,
     *mode = CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING;
     break;
   default:
-    LOG(fatal) << "Unknown pooling method.";
+    LOG(FATAL)  << "Unknown pooling method.";
   }
   CUDNN_CHECK(cudnnCreatePoolingDescriptor(pool_desc));
 #if CUDNN_VERSION_MIN(5, 0, 0)

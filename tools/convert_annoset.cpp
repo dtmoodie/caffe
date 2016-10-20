@@ -47,7 +47,7 @@ cv::Mat ReadImageToCVMat(const string& filename, const int height,
     
     cv::Mat cv_img_origin = cv::imread(filename, cv_read_flag);
     if (!cv_img_origin.data) {
-        LOG(error) << "Could not open or find file " << filename;
+        LOG(ERROR) << "Could not open or find file " << filename;
         return cv_img_origin;
     }
     if (min_dim > 0 || max_dim > 0) {
@@ -178,13 +178,13 @@ int main(int argc, char** argv) {
   }
   if (vm["shuffle"].as<bool>()) {
     // randomly shuffle data
-    LOG(info) << "Shuffling data";
+    LOG(INFO) << "Shuffling data";
     shuffle(lines.begin(), lines.end());
   }
-  LOG(info) << "A total of " << lines.size() << " images.";
+  LOG(INFO) << "A total of " << lines.size() << " images.";
 
   if (encode_type.size() && !encoded)
-    LOG(info) << "encode_type specified, assuming encoded=true.";
+    LOG(INFO) << "encode_type specified, assuming encoded=true.";
 
   int min_dim = std::max<int>(0, vm["min_dim"].as<int>());
   int max_dim = std::max<int>(0, vm["max_dim"].as<int>());
@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
       string fn = lines[line_id].first;
       size_t p = fn.rfind('.');
       if ( p == fn.npos )
-        LOG(warning) << "Failed to guess the encoding of '" << fn << "'";
+        LOG(WARNING) << "Failed to guess the encoding of '" << fn << "'";
       enc = fn.substr(p);
       std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
     }
@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
       anno_datum.set_type(AnnotatedDatum_AnnotationType_BBOX);
     }
     if (status == false) {
-      LOG(warning) << "Failed to read " << lines[line_id].first;
+      LOG(WARNING) << "Failed to read " << lines[line_id].first;
       continue;
     }
     if (check_size) {
@@ -254,16 +254,16 @@ int main(int argc, char** argv) {
       // Commit db
       txn->Commit();
       txn.reset(db->NewTransaction());
-      LOG(info) << "Processed " << count << " files.";
+      LOG(INFO) << "Processed " << count << " files.";
     }
   }
   // write the last batch
   if (count % 1000 != 0) {
     txn->Commit();
-    LOG(info) << "Processed " << count << " files.";
+    LOG(INFO) << "Processed " << count << " files.";
   }
 #else
-  LOG(fatal) << "This tool requires OpenCV; compile with USE_OPENCV.";
+  LOG(FATAL) << "This tool requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   return 0;
 }

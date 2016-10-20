@@ -1,3 +1,4 @@
+#ifndef USE_GLOG
 #define NOMINMAX
 #include "caffe/logging.hpp"
 using namespace caffe;
@@ -317,3 +318,4 @@ throw_on_destroy::~throw_on_destroy()
         throw ExceptionWithCallStack<std::string>(log_stream_.str(), ss.str());
     }
 }
+#endif

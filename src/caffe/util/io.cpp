@@ -101,7 +101,7 @@ cv::Mat ReadImageToCVMat(const string& filename, const int height,
     CV_LOAD_IMAGE_GRAYSCALE);
   cv::Mat cv_img_origin = cv::imread(filename, cv_read_flag);
   if (!cv_img_origin.data) {
-    LOG(error) << "Could not open or find file " << filename;
+    LOG(ERROR) << "Could not open or find file " << filename;
     return cv_img_origin;
   }
   if (min_dim > 0 || max_dim > 0) {
@@ -194,7 +194,7 @@ bool ReadImageToDatum(const string& filename, const int label,
 void GetImageSize(const string& filename, int* height, int* width) {
   cv::Mat cv_img = cv::imread(filename);
   if (!cv_img.data) {
-    LOG(error) << "Could not open or find file " << filename;
+    LOG(ERROR) << "Could not open or find file " << filename;
     return;
   }
   *height = cv_img.rows;
@@ -278,12 +278,12 @@ bool ReadRichImageToAnnotatedDatum(const string& filename,
         return ReadTxtToAnnotatedDatum(labelfile, ori_height, ori_width,
                                        anno_datum);
       } else {
-        LOG(fatal) << "Unknown label file type.";
+        LOG(FATAL) << "Unknown label file type.";
         return false;
       }
       break;
     default:
-      LOG(fatal) << "Unknown annotation type.";
+      LOG(FATAL) << "Unknown annotation type.";
       return false;
   }
 }
@@ -301,13 +301,13 @@ bool ReadXMLToAnnotatedDatum(const string& labelfile, const int img_height,
     height = pt.get<int>("annotation.size.height");
     width = pt.get<int>("annotation.size.width");
   } catch (const ptree_error &e) {
-    LOG(warning) << "When parsing " << labelfile << ": " << e.what();
+    LOG(WARNING) << "When parsing " << labelfile << ": " << e.what();
     height = img_height;
     width = img_width;
   }
-  LOG_IF(warning, height != img_height) << labelfile <<
+  LOG_IF(WARNING, height != img_height) << labelfile <<
       " inconsistent image height.";
-  LOG_IF(warning, width != img_width) << labelfile <<
+  LOG_IF(WARNING, width != img_width) << labelfile <<
       " inconsistent image width.";
   CHECK(width != 0 && height != 0) << labelfile <<
       " no valid image width/height.";
@@ -323,7 +323,7 @@ bool ReadXMLToAnnotatedDatum(const string& labelfile, const int img_height,
         if (v2.first == "name") {
           string name = pt2.data();
           if (name_to_label.find(name) == name_to_label.end()) {
-            LOG(fatal) << "Unknown name: " << name;
+            LOG(FATAL) << "Unknown name: " << name;
           }
           int label = name_to_label.find(name)->second;
           bool found_group = false;
@@ -357,25 +357,25 @@ bool ReadXMLToAnnotatedDatum(const string& labelfile, const int img_height,
           int xmax = pt2.get("xmax", 0);
           int ymax = pt2.get("ymax", 0);
           CHECK_NOTNULL(anno);
-          LOG_IF(warning, xmin > width) << labelfile <<
+          LOG_IF(WARNING, xmin > width) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, ymin > height) << labelfile <<
+          LOG_IF(WARNING, ymin > height) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, xmax > width) << labelfile <<
+          LOG_IF(WARNING, xmax > width) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, ymax > height) << labelfile <<
+          LOG_IF(WARNING, ymax > height) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, xmin < 0) << labelfile <<
+          LOG_IF(WARNING, xmin < 0) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, ymin < 0) << labelfile <<
+          LOG_IF(WARNING, ymin < 0) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, xmax < 0) << labelfile <<
+          LOG_IF(WARNING, xmax < 0) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, ymax < 0) << labelfile <<
+          LOG_IF(WARNING, ymax < 0) << labelfile <<
               " bounding box exceeds image boundary.";
-          LOG_IF(warning, xmin > xmax) << labelfile <<
+          LOG_IF(WARNING, xmin > xmax) << labelfile <<
               " bounding box irregular.";
-          LOG_IF(warning, ymin > ymax) << labelfile <<
+          LOG_IF(WARNING, ymin > ymax) << labelfile <<
               " bounding box irregular.";
           // Store the normalized bounding box.
           NormalizedBBox* bbox = anno->mutable_bbox();
@@ -404,13 +404,13 @@ bool ReadJSONToAnnotatedDatum(const string& labelfile, const int img_height,
     height = pt.get<int>("image.height");
     width = pt.get<int>("image.width");
   } catch (const ptree_error &e) {
-    LOG(warning) << "When parsing " << labelfile << ": " << e.what();
+    LOG(WARNING) << "When parsing " << labelfile << ": " << e.what();
     height = img_height;
     width = img_width;
   }
-  LOG_IF(warning, height != img_height) << labelfile <<
+  LOG_IF(WARNING, height != img_height) << labelfile <<
       " inconsistent image height.";
-  LOG_IF(warning, width != img_width) << labelfile <<
+  LOG_IF(WARNING, width != img_width) << labelfile <<
       " inconsistent image width.";
   CHECK(width != 0 && height != 0) << labelfile <<
       " no valid image width/height.";
@@ -424,7 +424,7 @@ bool ReadJSONToAnnotatedDatum(const string& labelfile, const int img_height,
     // Get category_id.
     string name = object.get<string>("category_id");
     if (name_to_label.find(name) == name_to_label.end()) {
-      LOG(fatal) << "Unknown name: " << name;
+      LOG(FATAL) << "Unknown name: " << name;
     }
     int label = name_to_label.find(name)->second;
     bool found_group = false;
@@ -465,25 +465,25 @@ bool ReadJSONToAnnotatedDatum(const string& labelfile, const int img_height,
     float xmax = bbox_items[0] + bbox_items[2];
     float ymax = bbox_items[1] + bbox_items[3];
     CHECK_NOTNULL(anno);
-    LOG_IF(warning, xmin > width) << labelfile <<
+    LOG_IF(WARNING, xmin > width) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymin > height) << labelfile <<
+    LOG_IF(WARNING, ymin > height) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmax > width) << labelfile <<
+    LOG_IF(WARNING, xmax > width) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymax > height) << labelfile <<
+    LOG_IF(WARNING, ymax > height) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmin < 0) << labelfile <<
+    LOG_IF(WARNING, xmin < 0) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymin < 0) << labelfile <<
+    LOG_IF(WARNING, ymin < 0) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmax < 0) << labelfile <<
+    LOG_IF(WARNING, xmax < 0) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymax < 0) << labelfile <<
+    LOG_IF(WARNING, ymax < 0) << labelfile <<
         " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmin > xmax) << labelfile <<
+    LOG_IF(WARNING, xmin > xmax) << labelfile <<
         " bounding box irregular.";
-    LOG_IF(warning, ymin > ymax) << labelfile <<
+    LOG_IF(WARNING, ymin > ymax) << labelfile <<
         " bounding box irregular.";
     // Store the normalized bounding box.
     NormalizedBBox* bbox = anno->mutable_bbox();
@@ -501,7 +501,7 @@ bool ReadTxtToAnnotatedDatum(const string& labelfile, const int height,
     const int width, AnnotatedDatum* anno_datum) {
   std::ifstream infile(labelfile.c_str());
   if (!infile.good()) {
-    LOG(info) << "Cannot open " << labelfile;
+    LOG(INFO) << "Cannot open " << labelfile;
     return false;
   }
   int label;
@@ -531,25 +531,25 @@ bool ReadTxtToAnnotatedDatum(const string& labelfile, const int height,
       instance_id = 0;
     }
     anno->set_instance_id(instance_id++);
-    LOG_IF(warning, xmin > width) << labelfile <<
+    LOG_IF(WARNING, xmin > width) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymin > height) << labelfile <<
+    LOG_IF(WARNING, ymin > height) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmax > width) << labelfile <<
+    LOG_IF(WARNING, xmax > width) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymax > height) << labelfile <<
+    LOG_IF(WARNING, ymax > height) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmin < 0) << labelfile <<
+    LOG_IF(WARNING, xmin < 0) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymin < 0) << labelfile <<
+    LOG_IF(WARNING, ymin < 0) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmax < 0) << labelfile <<
+    LOG_IF(WARNING, xmax < 0) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, ymax < 0) << labelfile <<
+    LOG_IF(WARNING, ymax < 0) << labelfile <<
       " bounding box exceeds image boundary.";
-    LOG_IF(warning, xmin > xmax) << labelfile <<
+    LOG_IF(WARNING, xmin > xmax) << labelfile <<
       " bounding box irregular.";
-    LOG_IF(warning, ymin > ymax) << labelfile <<
+    LOG_IF(WARNING, ymin > ymax) << labelfile <<
       " bounding box irregular.";
     // Store the normalized bounding box.
     NormalizedBBox* bbox = anno->mutable_bbox();
@@ -612,7 +612,7 @@ bool ReadLabelFileToLabelMap(const string& filename, bool include_background,
         map_item->set_display_name(fields[2]);
         break;
       default:
-        LOG(fatal) << "The number of fields should be [1, 3].";
+        LOG(FATAL) << "The number of fields should be [1, 3].";
         break;
     }
   }
@@ -629,7 +629,7 @@ bool MapNameToLabel(const LabelMap& map, const bool strict_check,
     const int label = map.item(i).label();
     if (strict_check) {
       if (!name_to_label->insert(std::make_pair(name, label)).second) {
-        LOG(fatal) << "There are many duplicates of name: " << name;
+        LOG(FATAL) << "There are many duplicates of name: " << name;
         return false;
       }
     } else {
@@ -649,7 +649,7 @@ bool MapLabelToName(const LabelMap& map, const bool strict_check,
     const int label = map.item(i).label();
     if (strict_check) {
       if (!label_to_name->insert(std::make_pair(label, name)).second) {
-        LOG(fatal) << "There are many duplicates of label: " << label;
+        LOG(FATAL) << "There are many duplicates of label: " << label;
         return false;
       }
     } else {
@@ -670,7 +670,7 @@ bool MapLabelToDisplayName(const LabelMap& map, const bool strict_check,
     if (strict_check) {
       if (!label_to_display_name->insert(
               std::make_pair(label, display_name)).second) {
-        LOG(fatal) << "There are many duplicates of label: " << label;
+        LOG(FATAL) << "There are many duplicates of label: " << label;
         return false;
       }
     } else {
@@ -686,9 +686,10 @@ cv::Mat DecodeDatumToCVMatNative(const Datum& datum) {
   CHECK(datum.encoded()) << "Datum not encoded";
   const string& data = datum.data();
   std::vector<char> vec_data(data.c_str(), data.c_str() + data.size());
+  CHECK(!vec_data.empty()) << " empty data field for given datum, cannot decode image";
   cv_img = cv::imdecode(vec_data, -1);
   if (!cv_img.data) {
-    LOG(error) << "Could not decode datum ";
+    LOG(ERROR) << "Could not decode datum ";
   }
   return cv_img;
 }
@@ -697,11 +698,12 @@ cv::Mat DecodeDatumToCVMat(const Datum& datum, bool is_color) {
   CHECK(datum.encoded()) << "Datum not encoded";
   const string& data = datum.data();
   std::vector<char> vec_data(data.c_str(), data.c_str() + data.size());
+  CHECK(!vec_data.empty()) << " empty data field for given datum, cannot decode image";
   int cv_read_flag = (is_color ? CV_LOAD_IMAGE_COLOR :
     CV_LOAD_IMAGE_GRAYSCALE);
   cv_img = cv::imdecode(vec_data, cv_read_flag);
   if (!cv_img.data) {
-    LOG(error) << "Could not decode datum ";
+    LOG(ERROR) << "Could not decode datum ";
   }
   return cv_img;
 }

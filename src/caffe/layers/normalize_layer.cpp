@@ -31,7 +31,7 @@ void NormalizeLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
   caffe_set(spatial_dim, Dtype(1), sum_spatial_multiplier_.mutable_cpu_data());
   channel_shared_ = norm_param.channel_shared();
   if (this->blobs_.size() > 0) {
-    LOG(info) << "Skipping parameter initialization";
+    LOG(INFO) << "Skipping parameter initialization";
   } else {
     this->blobs_.resize(1);
     if (channel_shared_) {

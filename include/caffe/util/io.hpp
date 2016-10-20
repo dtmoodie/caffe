@@ -34,7 +34,7 @@ inline void MakeTempDir(string* temp_dirname) {
       return;
     }
   }
-  LOG(fatal) << "Failed to create a temporary directory.";
+  LOG(FATAL) << "Failed to create a temporary directory.";
 }
 
 inline void MakeTempFilename(string* temp_filename) {
@@ -63,10 +63,10 @@ inline void GetTempDirname(string* temp_dirname) {
                 *temp_dirname = dir.string();
                 return;
             }
-            LOG(fatal) << "Failed to remove a temporary directory.";
+            LOG(FATAL) << "Failed to remove a temporary directory.";
         }
     }
-    LOG(fatal) << "Failed to create a temporary directory.";
+    LOG(FATAL) << "Failed to create a temporary directory.";
 }
 
 inline void GetTempFilename(string* temp_filename) {

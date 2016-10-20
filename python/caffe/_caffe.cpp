@@ -177,10 +177,10 @@ shared_ptr<Net<Dtype> > Net_Init(string network_file, int phase,
 // Legacy Net construct-and-load convenience constructor
 shared_ptr<Net<Dtype> > Net_Init_Load(
     string param_file, string pretrained_param_file, int phase) {
-  LOG(warning) << "DEPRECATION WARNING - deprecated use of Python interface";
-  LOG(warning) << "Use this instead (with the named \"weights\""
+  LOG(WARNING) << "DEPRECATION WARNING - deprecated use of Python interface";
+  LOG(WARNING) << "Use this instead (with the named \"weights\""
     << " parameter):";
-  LOG(warning) << "Net('" << param_file << "', " << phase
+  LOG(WARNING) << "Net('" << param_file << "', " << phase
     << ", weights='" << pretrained_param_file << "')";
   CheckFile(param_file);
   CheckFile(pretrained_param_file);
@@ -331,14 +331,14 @@ void Solver_add_callback(Solver<Dtype> * solver, bp::object on_start,
   bp::object on_gradients_ready) {
   solver->add_callback(new PythonCallback<Dtype>(on_start, on_gradients_ready));
 }
-
+#ifndef USE_GLOG
 void caffe_log_exception_translator(const caffe::ExceptionWithCallStack<std::string>& e)
 {
     std::stringstream ss;
     ss << e << "\n" << e.CallStack();
     PyErr_SetString(PyExc_UserWarning, ss.str().c_str());
 }
-
+#endif
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SolveOverloads, Solve, 0, 1);
 
 BOOST_PYTHON_MODULE(_caffe) {
@@ -483,8 +483,9 @@ BOOST_PYTHON_MODULE(_caffe) {
     .def(bp::vector_indexing_suite<vector<shared_ptr<Net<Dtype> > >, true>());
   bp::class_<vector<bool> >("BoolVec")
     .def(bp::vector_indexing_suite<vector<bool> >());
-
+#ifndef USE_GLOG
   bp::register_exception_translator<caffe::ExceptionWithCallStack<std::string>>(&caffe_log_exception_translator);
+#endif
   // boost python expects a void (missing) return value, while import_array
   // returns NULL for python3. import_array1() forces a void return value.
   import_array1();

@@ -27,7 +27,7 @@ class DLL_EXPORT ReductionLayer : public Layer<Dtype> {
         case ReductionParameter_ReductionOp_MEAN: break;
         case ReductionParameter_ReductionOp_ASUM: break;
         case ReductionParameter_ReductionOp_SUMSQ: break;
-        default: LOG(fatal) << "Unknown reduction op: " << ReductionParameter_ReductionOp_Name(op_);
+        default: LOG(FATAL) << "Unknown reduction op: " << ReductionParameter_ReductionOp_Name(op_);
     }
   }
   virtual void LayerSetUp(const vector<Blob<Dtype>*>& bottom,

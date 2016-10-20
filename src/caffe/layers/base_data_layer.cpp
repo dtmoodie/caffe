@@ -66,10 +66,10 @@ void BasePrefetchingDataLayer<Dtype>::LayerSetUp(
     }
   }
 #endif
-  DLOG(info) << "Initializing prefetch";
+  DLOG(INFO) << "Initializing prefetch";
   this->data_transformer_->InitRand();
   StartInternalThread();
-  DLOG(info) << "Prefetch initialized.";
+  DLOG(INFO) << "Prefetch initialized.";
 }
 
 template <typename Dtype>
@@ -83,7 +83,7 @@ void BasePrefetchingDataLayer<Dtype>::InternalThreadEntry() {
 
   try {
     while (!must_stop()) {
-      Batch<Dtype>* batch = prefetch_free_.pop();
+      Batch<Dtype>* batch = prefetch_free_.pop("BasePrefetchingDataLayer waiting on new free data");
       load_batch(batch);
 #ifndef CPU_ONLY
       if (Caffe::mode() == Caffe::GPU) {
@@ -112,7 +112,7 @@ void BasePrefetchingDataLayer<Dtype>::Forward_cpu(
   // Copy the data
   caffe_copy(batch->data_.count(), batch->data_.cpu_data(),
              top[0]->mutable_cpu_data());
-  DLOG(info) << "Prefetch copied";
+  DLOG(INFO) << "Prefetch copied";
   if (this->output_labels_) {
     // Reshape to loaded labels.
     top[1]->ReshapeLike(batch->label_);

@@ -49,10 +49,10 @@ void convert_dataset(const string& input_folder, const string& output_folder,
   datum.set_height(kCIFARSize);
   datum.set_width(kCIFARSize);
 
-  LOG(info) << "Writing Training data";
+  LOG(INFO) << "Writing Training data";
   for (int fileid = 0; fileid < kCIFARTrainBatches; ++fileid) {
     // Open files
-    LOG(info) << "Training Batch " << fileid + 1;
+    LOG(INFO) << "Training Batch " << fileid + 1;
     string batchFileName = input_folder + "/data_batch_"
       + caffe::format_int(fileid+1) + ".bin";
     std::ifstream data_file(batchFileName.c_str(),
@@ -70,7 +70,7 @@ void convert_dataset(const string& input_folder, const string& output_folder,
   txn->Commit();
   train_db->Close();
 
-  LOG(info) << "Writing Testing data";
+  LOG(INFO) << "Writing Testing data";
   scoped_ptr<db::DB> test_db(db::GetDB(db_type));
   test_db->Open(output_folder + "/cifar10_test_" + db_type, db::NEW);
   txn.reset(test_db->NewTransaction());

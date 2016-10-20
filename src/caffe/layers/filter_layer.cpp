@@ -79,7 +79,7 @@ template <typename Dtype>
 void FilterLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
   if (propagate_down[bottom.size() - 1]) {
-    LOG(fatal) << this->type()
+    LOG(FATAL) << this->type()
                << "Layer cannot backpropagate to filter index inputs";
   }
   for (int i = 0; i < top.size(); i++) {

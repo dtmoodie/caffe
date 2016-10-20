@@ -38,7 +38,7 @@ void PermuteLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     CHECK_LT(order, num_axes_)
         << "order should be less than the input dimension.";
     if (std::find(orders.begin(), orders.end(), order) != orders.end()) {
-      LOG(fatal) << "there are duplicate orders";
+      LOG(FATAL) << "there are duplicate orders";
     }
     orders.push_back(order);
   }

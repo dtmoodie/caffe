@@ -102,7 +102,11 @@ void SampleBBox(const Sampler& sampler, NormalizedBBox* sampled_bbox) {
   // Figure out bbox dimension.
   float bbox_width = scale * sqrt(aspect_ratio);
   float bbox_height = scale / sqrt(aspect_ratio);
-
+  // Bound with and height to (0,1)
+  bbox_height = std::max(0.0f, bbox_height);
+  bbox_width = std::max(0.0f, bbox_width);
+  bbox_height = std::min(1.0f, bbox_height);
+  bbox_width = std::min(1.0f, bbox_width);
   // Figure out top left coordinates.
   float w_off, h_off;
   caffe_rng_uniform(1, 0.f, 1 - bbox_width, &w_off);

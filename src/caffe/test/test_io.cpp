@@ -25,7 +25,7 @@ bool ReadImageToDatumReference(const string& filename, const int label,
 
   cv::Mat cv_img_origin = cv::imread(filename, cv_read_flag);
   if (!cv_img_origin.data) {
-    LOG(error) << "Could not open or find file " << filename;
+    LOG(ERROR) << "Could not open or find file " << filename;
     return false;
   }
   if (height > 0 && width > 0) {

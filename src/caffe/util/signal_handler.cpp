@@ -33,15 +33,15 @@ namespace {
 
 void HookupHandler() {
     if (already_hooked_up) {
-      LOG(fatal) << "Tried to hookup signal handlers more than once.";
+      LOG(FATAL) << "Tried to hookup signal handlers more than once.";
     }
     already_hooked_up = true;
 #ifdef _MSC_VER
     if (signal(SIGBREAK, handle_signal) == SIG_ERR) {
-      LOG(fatal) << "Cannot install SIGBREAK handler.";
+      LOG(FATAL) << "Cannot install SIGBREAK handler.";
     }
     if (signal(SIGINT, handle_signal) == SIG_ERR) {
-      LOG(fatal) << "Cannot install SIGINT handler.";
+      LOG(FATAL) << "Cannot install SIGINT handler.";
     }
 #else
     struct sigaction sa;
@@ -53,10 +53,10 @@ void HookupHandler() {
     sigfillset(&sa.sa_mask);
     // Intercept SIGHUP and SIGINT
     if (sigaction(SIGHUP, &sa, NULL) == -1) {
-      LOG(fatal) << "Cannot install SIGHUP handler.";
+      LOG(FATAL) << "Cannot install SIGHUP handler.";
     }
     if (sigaction(SIGINT, &sa, NULL) == -1) {
-      LOG(fatal) << "Cannot install SIGINT handler.";
+      LOG(FATAL) << "Cannot install SIGINT handler.";
     }
 #endif
   }
@@ -67,10 +67,10 @@ void UnhookHandler() {
     if (already_hooked_up) {
 #ifdef _MSC_VER
       if (signal(SIGBREAK, SIG_DFL) == SIG_ERR) {
-        LOG(fatal) << "Cannot uninstall SIGBREAK handler.";
+        LOG(FATAL) << "Cannot uninstall SIGBREAK handler.";
       }
       if (signal(SIGINT, SIG_DFL) == SIG_ERR) {
-        LOG(fatal) << "Cannot uninstall SIGINT handler.";
+        LOG(FATAL) << "Cannot uninstall SIGINT handler.";
       }
 #else
       struct sigaction sa;
@@ -82,10 +82,10 @@ void UnhookHandler() {
       sigfillset(&sa.sa_mask);
       // Intercept SIGHUP and SIGINT
       if (sigaction(SIGHUP, &sa, NULL) == -1) {
-        LOG(fatal) << "Cannot uninstall SIGHUP handler.";
+        LOG(FATAL) << "Cannot uninstall SIGHUP handler.";
       }
       if (sigaction(SIGINT, &sa, NULL) == -1) {
-        LOG(fatal) << "Cannot uninstall SIGINT handler.";
+        LOG(FATAL) << "Cannot uninstall SIGINT handler.";
       }
 #endif
       already_hooked_up = false;

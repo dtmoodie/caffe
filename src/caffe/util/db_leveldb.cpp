@@ -15,7 +15,7 @@ void LevelDB::Open(const string& source, Mode mode) {
   leveldb::Status status = leveldb::DB::Open(options, source, &db_);
   CHECK(status.ok()) << "Failed to open leveldb " << source
                      << std::endl << status.ToString();
-  LOG(info) << "Opened leveldb " << source;
+  LOG(INFO) << "Opened leveldb " << source;
 }
 
 }  // namespace db

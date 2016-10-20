@@ -24,7 +24,7 @@ class DLL_EXPORT PoolingLayer : public Layer<Dtype> {
         case PoolingParameter_PoolMethod_MAX: break;
         case PoolingParameter_PoolMethod_AVE: break;
         case PoolingParameter_PoolMethod_STOCHASTIC: break;
-        default: LOG(fatal) << "Unknown pooling method.";
+        default: LOG(FATAL) << "Unknown pooling method.";
       }
     
   }

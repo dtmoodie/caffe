@@ -1,6 +1,20 @@
 #pragma once
 #include "export.hpp"
 
+
+#ifdef USE_GLOG
+#include <glog/logging.h>
+
+#else
+
+#define TRACE trace
+#define DEBUG debug
+#define INFO info
+#define WARNING warning
+#define ERROR error
+#define FATAL fatal
+
+
 #define DISCARD_MESSAGE true ? (void)0 : caffe::LogMessageVoidify() & caffe::eat_message().stream()
 
 #ifndef __NVCC__
@@ -176,11 +190,12 @@ namespace caffe
     };
     template <typename T>
     T* CheckNotNull(const char *file, int line, const char *names, T* t) {
-    if (t == NULL) {
-      std::stringstream ss;
-      LOG(fatal) << "[" << file << ":" << line << "] " << names << "\nException at" << print_callstack(0, true, ss) << "\n";
-      throw ExceptionWithCallStack<std::string>(std::string(names), ss.str());
+        if (t == NULL) {
+          std::stringstream ss;
+          LOG(FATAL) << "[" << file << ":" << line << "] " << names << "\nException at" << print_callstack(0, true, ss) << "\n";
+          throw ExceptionWithCallStack<std::string>(std::string(names), ss.str());
+        }
+        return t;
     }
-  return t;
 }
-}
+#endif

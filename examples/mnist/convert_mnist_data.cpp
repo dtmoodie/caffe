@@ -98,8 +98,8 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   datum.set_channels(1);
   datum.set_height(rows);
   datum.set_width(cols);
-  LOG(info) << "A total of " << num_items << " items.";
-  LOG(info) << "Rows: " << rows << " Cols: " << cols;
+  LOG(INFO) << "A total of " << num_items << " items.";
+  LOG(INFO) << "Rows: " << rows << " Cols: " << cols;
   for (int item_id = 0; item_id < num_items; ++item_id) {
     image_file.read(pixels, rows * cols);
     label_file.read(&label, 1);
@@ -119,7 +119,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   if (count % 1000 != 0) {
       txn->Commit();
   }
-  LOG(info) << "Processed " << count << " files.";
+  LOG(INFO) << "Processed " << count << " files.";
   delete[] pixels;
   db->Close();
 }
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
 }
 #else
 int main(int argc, char** argv) {
-  LOG(fatal) << "This example requires LevelDB and LMDB; " <<
+  LOG(FATAL) << "This example requires LevelDB and LMDB; " <<
   "compile with USE_LEVELDB and USE_LMDB.";
 }
 #endif  // USE_LEVELDB and USE_LMDB

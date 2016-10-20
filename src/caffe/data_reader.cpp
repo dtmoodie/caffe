@@ -113,12 +113,17 @@ void DataReader<T>::Body::InternalThreadEntry() {
     }
   } catch (boost::thread_interrupted&) {
     // Interrupted exception is expected on shutdown
+    LOG(INFO) << "Data treader thread shutting down as expected";
+  }catch(...)
+  {
+    LOG(ERROR) << "Unhandled exception killing data reader thread";
   }
+
 }
 
 template <typename T>
 void DataReader<T>::Body::read_one(db::Cursor* cursor, QueuePair* qp) {
-  T* t = qp->free_.pop();
+  T* t = qp->free_.pop("Data reader waiting on free element");
   // TODO deserialize in-place instead of copy?
   t->ParseFromString(cursor->value());
   qp->full_.push(t);
@@ -126,7 +131,7 @@ void DataReader<T>::Body::read_one(db::Cursor* cursor, QueuePair* qp) {
   // go to the next iter
   cursor->Next();
   if (!cursor->valid()) {
-    DLOG(info) << "Restarting data prefetching from start.";
+    DLOG(INFO) << "Restarting data prefetching from start.";
     cursor->SeekToFirst();
   }
 }

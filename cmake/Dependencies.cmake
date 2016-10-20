@@ -20,6 +20,21 @@ list(APPEND Caffe_LINKER_LIBS ${Boost_LIBRARIES})
 find_package(Threads REQUIRED)
 list(APPEND Caffe_LINKER_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
+# ---[ google-log
+IF(USE_GLOG)
+  include("cmake/External/glog.cmake")
+  include_directories(SYSTEM ${GLOG_INCLUDE_DIRS})
+  if(GLOG_LIBRARIES)
+    list(APPEND Caffe_LINKER_LIBS ${GLOG_LIBRARIES})
+  elseif(GLOG_LIBRARY_DEBUG AND GLOG_LIBRARY_RELEASE)
+    list(APPEND Caffe_LINKER_LIBS "debug;${GLOG_LIBRARY_DEBUG};optimized;${GLOG_LIBRARY_RELEASE}")
+  endif()
+  add_definitions(-DUSE_GLOG)
+  if(MSVC)
+    add_definitions(-DGLOG_NO_ABBREVIATED_SEVERITIES)
+  endif(MSVC)
+endif(USE_GLOG)
+
 # ---[ Google-protobuf
 include(cmake/ProtoBuf.cmake)
 

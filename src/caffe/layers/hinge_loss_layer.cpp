@@ -35,7 +35,7 @@ void HingeLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     loss[0] = caffe_cpu_dot(count, bottom_diff, bottom_diff) / num;
     break;
   default:
-    LOG(fatal) << "Unknown Norm";
+    LOG(FATAL) << "Unknown Norm";
   }
 }
 
@@ -43,7 +43,7 @@ template <typename Dtype>
 void HingeLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
   if (propagate_down[1]) {
-    LOG(fatal) << this->type()
+    LOG(FATAL) << this->type()
                << " Layer cannot backpropagate to label inputs.";
   }
   if (propagate_down[0]) {
@@ -67,7 +67,7 @@ void HingeLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       caffe_scal(count, loss_weight * 2 / num, bottom_diff);
       break;
     default:
-      LOG(fatal) << "Unknown Norm";
+      LOG(FATAL) << "Unknown Norm";
     }
   }
 }
