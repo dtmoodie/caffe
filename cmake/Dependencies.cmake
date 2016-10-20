@@ -49,11 +49,7 @@ if(MSVC)
 		${HDF5_LIBRARY_DIR}/zlibstatic.lib
 	)
 else(MSVC)
-    file(GLOB HDF5_LIBRARIES 
-		${HDF5_LIBRARY_DIR}/libhdf5.a
-		${HDF5_LIBRARY_DIR}/libhdf5_hl.a
-	)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lz")
+    find_package(HDF5 COMPONENTS HL REQUIRED)
 endif(MSVC)
 set(HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIR})
 set(HDF5_HL_LIBRARIES)
