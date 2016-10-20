@@ -72,7 +72,7 @@ void AccuracyLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       if (top.size() > 1) ++nums_buffer_.mutable_cpu_data()[label_value];
       DCHECK_GE(label_value, 0);
       DCHECK_LT(label_value, num_labels);
-      auto itr = class_distribution.find(label_value);
+      std::map<int,int>::iterator itr = class_distribution.find(label_value);
       if(itr != class_distribution.end())
           itr->second++;
       else
