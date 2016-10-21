@@ -305,14 +305,14 @@ int main(int argc, char** argv) {
     } else if (file_type == "video") {
       cv::VideoCapture cap(file);
       if (!cap.isOpened()) {
-        LOG(FATAL) << "Failed to open video: " << file;
+        LOG(fatal) << "Failed to open video: " << file;
       }
       cv::Mat img;
       int frame_count = 0;
       while (true) {
         bool success = cap.read(img);
         if (!success) {
-          LOG(INFO) << "Process " << frame_count << " frames from " << file;
+          LOG(info) << "Process " << frame_count << " frames from " << file;
           break;
         }
         CHECK(!img.empty()) << "Error when read frame";
@@ -341,13 +341,13 @@ int main(int argc, char** argv) {
         cap.release();
       }
     } else {
-      LOG(FATAL) << "Unknown file_type: " << file_type;
+      LOG(fatal) << "Unknown file_type: " << file_type;
     }
   }
   return 0;
 }
 #else
 int main(int argc, char** argv) {
-  LOG(FATAL)  << "This example requires OpenCV; compile with USE_OPENCV.";
+  LOG(fatal)  << "This example requires OpenCV; compile with USE_OPENCV.";
 }
 #endif  // USE_OPENCV

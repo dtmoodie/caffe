@@ -199,7 +199,7 @@ bool MeetEmitConstraint(const NormalizedBBox& src_bbox,
     float bbox_coverage = BBoxCoverage(bbox, src_bbox);
     return bbox_coverage > emit_constraint.emit_overlap();
   } else {
-    LOG(FATAL) << "Unknown emit type.";
+    LOG(fatal) << "Unknown emit type.";
     return false;
   }
 }
@@ -261,7 +261,7 @@ void EncodeBBox(
           log(bbox_height / prior_height) / prior_variance[3]);
     }
   } else {
-    LOG(FATAL) << "Unknown LocLossType.";
+    LOG(fatal) << "Unknown LocLossType.";
   }
 }
 
@@ -322,7 +322,7 @@ void DecodeBBox(
     decode_bbox->set_xmax(decode_bbox_center_x + decode_bbox_width / 2.);
     decode_bbox->set_ymax(decode_bbox_center_y + decode_bbox_height / 2.);
   } else {
-    LOG(FATAL) << "Unknown LocLossType.";
+    LOG(fatal) << "Unknown LocLossType.";
   }
   float bbox_size = BBoxSize(*decode_bbox);
   decode_bbox->set_size(bbox_size);
@@ -370,7 +370,7 @@ void DecodeBBoxesAll(const vector<LabelBBox>& all_loc_preds,
       }
       if (all_loc_preds[i].find(label) == all_loc_preds[i].end()) {
         // Something bad happened if there are no predictions for current label.
-        LOG(FATAL) << "Could not find location predictions for label " << label;
+        LOG(fatal) << "Could not find location predictions for label " << label;
       }
       const vector<NormalizedBBox>& label_loc_preds =
           all_loc_preds[i].find(label)->second;
@@ -507,7 +507,7 @@ void MatchBBox(const vector<NormalizedBBox>& gt_bboxes,
       }
       break;
     default:
-      LOG(FATAL) << "Unknown matching type.";
+      LOG(fatal) << "Unknown matching type.";
       break;
   }
 
@@ -717,7 +717,7 @@ void GetMaxConfidenceScores(const Dtype* conf_data, const int num,
       } else if (loss_type == MultiBoxLossParameter_ConfLossType_LOGISTIC) {
         maxval_pos = 1. / (1. + exp(-maxval_pos));
       } else {
-        LOG(FATAL) << "Unknown conf loss type.";
+        LOG(fatal) << "Unknown conf loss type.";
       }
       max_scores.push_back(maxval_pos);
     }
@@ -1076,7 +1076,7 @@ void ComputeAP(const vector<pair<float, int> >& tp, const int num_pos,
       prev_rec = (*rec)[i];
     }
   } else {
-    LOG(FATAL) << "Unknown ap_version: " << ap_version;
+    LOG(fatal) << "Unknown ap_version: " << ap_version;
   }
 }
 

@@ -49,7 +49,7 @@ void AnnotatedDataLayer<Dtype>::DataLayerSetUp(
   for (int i = 0; i < this->PREFETCH_COUNT; ++i) {
     this->prefetch_[i].data_.Reshape(top_shape);
   }
-  LOG(INFO) << "output data size: " << top[0]->num() << ","
+  LOG(info) << "output data size: " << top[0]->num() << ","
       << top[0]->channels() << "," << top[0]->height() << ","
       << top[0]->width();
   // label
@@ -79,7 +79,7 @@ void AnnotatedDataLayer<Dtype>::DataLayerSetUp(
         label_shape[2] = std::max(num_bboxes, 1);
         label_shape[3] = 8;
       } else {
-        LOG(FATAL) << "Unknown annotation type.";
+        LOG(fatal) << "Unknown annotation type.";
       }
     } else {
       label_shape[0] = batch_size;
@@ -167,7 +167,7 @@ void AnnotatedDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
             num_bboxes += transformed_anno_vec[g].annotation_size();
           }
         } else {
-          LOG(FATAL) << "Unknown annotation type.";
+          LOG(fatal) << "Unknown annotation type.";
         }
         all_anno[item_id] = transformed_anno_vec;
       } else {
@@ -224,14 +224,14 @@ void AnnotatedDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
         }
       }
     } else {
-      LOG(FATAL) << "Unknown annotation type.";
+      LOG(fatal) << "Unknown annotation type.";
     }
   }
   timer.Stop();
   batch_timer.Stop();
-  //DLOG(INFO) << "Prefetch batch: " << batch_timer.MilliSeconds() << " ms.";
-  //DLOG(INFO) << "     Read time: " << read_time / 1000 << " ms.";
-  //DLOG(INFO) << "Transform time: " << trans_time / 1000 << " ms.";
+  //DLOG(info) << "Prefetch batch: " << batch_timer.MilliSeconds() << " ms.";
+  //DLOG(info) << "     Read time: " << read_time / 1000 << " ms.";
+  //DLOG(info) << "Transform time: " << trans_time / 1000 << " ms.";
 }
 
 INSTANTIATE_CLASS(AnnotatedDataLayer);

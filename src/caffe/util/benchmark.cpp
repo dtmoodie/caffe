@@ -57,7 +57,7 @@ void Timer::Stop() {
 
 float Timer::MicroSeconds() {
   if (!has_run_at_least_once()) {
-    LOG(WARNING) << "Timer has never been run before reading time.";
+    LOG(warning) << "Timer has never been run before reading time.";
     return 0;
   }
   if (running()) {
@@ -81,7 +81,7 @@ float Timer::MicroSeconds() {
 
 float Timer::MilliSeconds() {
   if (!has_run_at_least_once()) {
-    LOG(WARNING) << "Timer has never been run before reading time.";
+    LOG(warning) << "Timer has never been run before reading time.";
     return 0;
   }
   if (running()) {
@@ -142,7 +142,7 @@ void CPUTimer::Stop() {
 
 float CPUTimer::MilliSeconds() {
   if (!has_run_at_least_once()) {
-    LOG(WARNING) << "Timer has never been run before reading time.";
+    LOG(warning) << "Timer has never been run before reading time.";
     return 0;
   }
   if (running()) {
@@ -155,7 +155,7 @@ float CPUTimer::MilliSeconds() {
 
 float CPUTimer::MicroSeconds() {
   if (!has_run_at_least_once()) {
-    LOG(WARNING) << "Timer has never been run before reading time.";
+    LOG(warning) << "Timer has never been run before reading time.";
     return 0;
   }
   if (running()) {

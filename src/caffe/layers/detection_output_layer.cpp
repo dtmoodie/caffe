@@ -41,7 +41,7 @@ void DetectionOutputLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
   if (!output_directory_.empty() &&
       !boost::filesystem::is_directory(output_directory_)) {
     if (!boost::filesystem::create_directories(output_directory_)) {
-        LOG(ERROR) << "Failed to create directory: " << output_directory_;
+        LOG(error) << "Failed to create directory: " << output_directory_;
     }
   }
   output_name_prefix_ = save_output_param.output_name_prefix();
@@ -51,7 +51,7 @@ void DetectionOutputLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     string label_map_file = save_output_param.label_map_file();
     if (label_map_file.empty()) {
       // Ignore saving if there is no label_map_file provided.
-      LOG(WARNING) << "Provide label_map_file if output results to files.";
+      LOG(warning) << "Provide label_map_file if output results to files.";
       need_save_ = false;
     } else {
       LabelMap label_map;
@@ -69,7 +69,7 @@ void DetectionOutputLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     string name_size_file = save_output_param.name_size_file();
     if (name_size_file.empty()) {
       // Ignore saving if there is no name_size_file provided.
-      LOG(WARNING) << "Provide name_size_file if output results to files.";
+      LOG(warning) << "Provide name_size_file if output results to files.";
       need_save_ = false;
     } else {
       std::ifstream infile(name_size_file.c_str());
@@ -193,13 +193,13 @@ void DetectionOutputLayer<Dtype>::Forward_cpu(
       }
       if (conf_scores.find(c) == conf_scores.end()) {
         // Something bad happened if there are no predictions for current label.
-        LOG(FATAL) << "Could not find confidence predictions for label " << c;
+        LOG(fatal) << "Could not find confidence predictions for label " << c;
       }
       const vector<float>& scores = conf_scores.find(c)->second;
       int label = share_location_ ? -1 : c;
       if (decode_bboxes.find(label) == decode_bboxes.end()) {
         // Something bad happened if there are no predictions for current label.
-        LOG(FATAL) << "Could not find location predictions for label " << label;
+        LOG(fatal) << "Could not find location predictions for label " << label;
         continue;
       }
       const vector<NormalizedBBox>& bboxes = decode_bboxes.find(label)->second;
@@ -215,7 +215,7 @@ void DetectionOutputLayer<Dtype>::Forward_cpu(
         const vector<int>& label_indices = it->second;
         if (conf_scores.find(label) == conf_scores.end()) {
           // Something bad happened for current label.
-          LOG(FATAL) << "Could not find location predictions for " << label;
+          LOG(fatal) << "Could not find location predictions for " << label;
           continue;
         }
         const vector<float>& scores = conf_scores.find(label)->second;
@@ -249,7 +249,7 @@ void DetectionOutputLayer<Dtype>::Forward_cpu(
   top_shape.push_back(num_kept);
   top_shape.push_back(7);
   if (num_kept == 0) {
-    LOG(INFO) << "Couldn't find any detections";
+    LOG(info) << "Couldn't find any detections";
     top_shape[2] = 1;
     top[0]->Reshape(top_shape);
     caffe_set<Dtype>(top[0]->count(), -1, top[0]->mutable_cpu_data());
@@ -268,14 +268,14 @@ void DetectionOutputLayer<Dtype>::Forward_cpu(
       int label = it->first;
       if (conf_scores.find(label) == conf_scores.end()) {
         // Something bad happened if there are no predictions for current label.
-        LOG(FATAL) << "Could not find confidence predictions for " << label;
+        LOG(fatal) << "Could not find confidence predictions for " << label;
         continue;
       }
       const vector<float>& scores = conf_scores.find(label)->second;
       int loc_label = share_location_ ? -1 : label;
       if (decode_bboxes.find(loc_label) == decode_bboxes.end()) {
         // Something bad happened if there are no predictions for current label.
-        LOG(FATAL) << "Could not find location predictions for " << loc_label;
+        LOG(fatal) << "Could not find location predictions for " << loc_label;
         continue;
       }
       const vector<NormalizedBBox>& bboxes =

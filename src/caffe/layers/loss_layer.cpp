@@ -46,7 +46,7 @@ Dtype LossLayer<Dtype>::GetNormalizer(
       normalizer = Dtype(1);
       break;
     default:
-      LOG(FATAL) << "Unknown normalization mode: "
+      LOG(fatal) << "Unknown normalization mode: "
           << LossParameter_NormalizationMode_Name(normalization_mode);
   }
   // Some users will have no labels for some examples in order to 'turn off' a

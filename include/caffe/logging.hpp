@@ -4,21 +4,19 @@
 
 #ifdef USE_GLOG
 #include <glog/logging.h>
-
+#define trace TRACE
+#define debug DEBUG
+#define info INFO
+#define warning WARNING
+#define error ERROR
+#define fatal FATAL
 #else
-
-#define TRACE trace
-#define DEBUG debug
-#define INFO info
-#define WARNING warning
-#define ERROR error
-#define FATAL fatal
-
 
 #define DISCARD_MESSAGE true ? (void)0 : caffe::LogMessageVoidify() & caffe::eat_message().stream()
 
 #ifndef __NVCC__
 #include <boost/log/trivial.hpp>
+#include <functional>
 // This file replaces google logging with boost logging and equivalent macros
 #define LOG_EVERY_N_VARNAME(base, line) LOG_EVERY_N_VARNAME_CONCAT(base, line)
 #define LOG_EVERY_N_VARNAME_CONCAT(base, line) base ## line
@@ -192,7 +190,7 @@ namespace caffe
     T* CheckNotNull(const char *file, int line, const char *names, T* t) {
         if (t == NULL) {
           std::stringstream ss;
-          LOG(FATAL) << "[" << file << ":" << line << "] " << names << "\nException at" << print_callstack(0, true, ss) << "\n";
+          LOG(fatal) << "[" << file << ":" << line << "] " << names << "\nException at" << print_callstack(0, true, ss) << "\n";
           throw ExceptionWithCallStack<std::string>(std::string(names), ss.str());
         }
         return t;

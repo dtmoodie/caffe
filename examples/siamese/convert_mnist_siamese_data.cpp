@@ -82,8 +82,8 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   datum.set_channels(2);  // one channel for each image in the pair
   datum.set_height(rows);
   datum.set_width(cols);
-  LOG(INFO) << "A total of " << num_items << " items.";
-  LOG(INFO) << "Rows: " << rows << " Cols: " << cols;
+  LOG(info) << "A total of " << num_items << " items.";
+  LOG(info) << "Rows: " << rows << " Cols: " << cols;
   for (int itemid = 0; itemid < num_items; ++itemid) {
     int i = caffe::caffe_rng_rand() % num_items;  // pick a random  pair
     int j = caffe::caffe_rng_rand() % num_items;
@@ -124,6 +124,6 @@ int main(int argc, char** argv) {
 }
 #else
 int main(int argc, char** argv) {
-  LOG(FATAL) << "This example requires LevelDB; compile with USE_LEVELDB.";
+  LOG(fatal) << "This example requires LevelDB; compile with USE_LEVELDB.";
 }
 #endif  // USE_LEVELDB

@@ -91,7 +91,7 @@ void MultiBoxLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     loc_loss_layer_ = LayerRegistry<Dtype>::CreateLayer(layer_param);
     loc_loss_layer_->SetUp(loc_bottom_vec_, loc_top_vec_);
   } else {
-    LOG(FATAL) << "Unknown localization loss type.";
+    LOG(fatal) << "Unknown localization loss type.";
   }
   // Set up confidence loss layer.
   conf_loss_type_ = multibox_loss_param.conf_loss_type();
@@ -128,7 +128,7 @@ void MultiBoxLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     conf_loss_layer_ = LayerRegistry<Dtype>::CreateLayer(layer_param);
     conf_loss_layer_->SetUp(conf_bottom_vec_, conf_top_vec_);
   } else {
-    LOG(FATAL) << "Unknown confidence loss type.";
+    LOG(fatal) << "Unknown confidence loss type.";
   }
 }
 
@@ -361,7 +361,7 @@ void MultiBoxLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       conf_gt_.Reshape(conf_shape);
       conf_pred_.Reshape(conf_shape);
     } else {
-      LOG(FATAL) << "Unknown confidence loss type.";
+      LOG(fatal) << "Unknown confidence loss type.";
     }
     if (!do_neg_mining_) {
       // Consider all scores.
@@ -397,7 +397,7 @@ void MultiBoxLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
                 conf_gt_data[idx * num_classes_ + gt_label] = 1;
                 break;
               default:
-                LOG(FATAL) << "Unknown conf loss type.";
+                LOG(fatal) << "Unknown conf loss type.";
             }
             if (do_neg_mining_) {
               // Copy scores for matched bboxes.
@@ -422,7 +422,7 @@ void MultiBoxLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
                 conf_gt_data[count * num_classes_ + background_label_id_] = 1;
                 break;
               default:
-                LOG(FATAL) << "Unknown conf loss type.";
+                LOG(fatal) << "Unknown conf loss type.";
             }
             ++count;
           }
@@ -464,11 +464,11 @@ void MultiBoxLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     const vector<Blob<Dtype>*>& bottom) {
 
   if (propagate_down[2]) {
-    LOG(FATAL) << this->type()
+    LOG(fatal) << this->type()
         << " Layer cannot backpropagate to prior inputs.";
   }
   if (propagate_down[3]) {
-    LOG(FATAL) << this->type()
+    LOG(fatal) << this->type()
         << " Layer cannot backpropagate to label inputs.";
   }
 

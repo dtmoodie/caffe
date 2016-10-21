@@ -331,7 +331,7 @@ TYPED_TEST(DataTransformTest, TestMeanFile) {
       blob_mean.add_data(j);
   }
 
-  LOG(INFO) << "Using temporary mean_file " << mean_file;
+  LOG(info) << "Using temporary mean_file " << mean_file;
   WriteProtoToBinaryFile(blob_mean, mean_file);
 
   transform_param.set_mean_file(mean_file);

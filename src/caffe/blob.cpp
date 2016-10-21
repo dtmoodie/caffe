@@ -175,7 +175,7 @@ void Blob<Dtype>::Update() {
 #endif
     break;
   default:
-    LOG(FATAL) << "Syncedmem not initialized.";
+    LOG(fatal) << "Syncedmem not initialized.";
   }
 }
 
@@ -214,7 +214,7 @@ Dtype Blob<Dtype>::asum_data() const {
   case SyncedMemory::UNINITIALIZED:
     return 0;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << data_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << data_->head();
   }
   return 0;
 }
@@ -254,7 +254,7 @@ Dtype Blob<Dtype>::asum_diff() const {
   case SyncedMemory::UNINITIALIZED:
     return 0;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << diff_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << diff_->head();
   }
   return 0;
 }
@@ -296,7 +296,7 @@ Dtype Blob<Dtype>::sumsq_data() const {
   case SyncedMemory::UNINITIALIZED:
     return 0;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << data_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << data_->head();
   }
   return sumsq;
 }
@@ -338,7 +338,7 @@ Dtype Blob<Dtype>::sumsq_diff() const {
   case SyncedMemory::UNINITIALIZED:
     return 0;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << data_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << data_->head();
   }
   return sumsq;
 }
@@ -376,7 +376,7 @@ void Blob<Dtype>::scale_data(Dtype scale_factor) {
   case SyncedMemory::UNINITIALIZED:
     return;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << data_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << data_->head();
   }
 }
 
@@ -413,7 +413,7 @@ void Blob<Dtype>::scale_diff(Dtype scale_factor) {
   case SyncedMemory::UNINITIALIZED:
     return;
   default:
-    LOG(FATAL) << "Unknown SyncedMemory head state: " << diff_->head();
+    LOG(fatal) << "Unknown SyncedMemory head state: " << diff_->head();
   }
 }
 
@@ -446,7 +446,7 @@ void Blob<Dtype>::CopyFrom(const Blob& source, bool copy_diff, bool reshape) {
     if (reshape) {
       ReshapeLike(source);
     } else {
-      LOG(FATAL) << "Trying to copy blobs of different sizes.";
+      LOG(fatal) << "Trying to copy blobs of different sizes.";
     }
   }
   switch (Caffe::mode()) {
@@ -469,7 +469,7 @@ void Blob<Dtype>::CopyFrom(const Blob& source, bool copy_diff, bool reshape) {
     }
     break;
   default:
-    LOG(FATAL) << "Unknown caffe mode.";
+    LOG(fatal) << "Unknown caffe mode.";
   }
 }
 

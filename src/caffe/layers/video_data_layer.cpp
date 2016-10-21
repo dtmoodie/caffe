@@ -41,14 +41,14 @@ void VideoDataLayer<Dtype>::DataLayerSetUp(
   if (video_type_ == VideoDataParameter_VideoType_WEBCAM) {
     const int device_id = video_data_param.device_id();
     if (!cap_.open(device_id)) {
-      LOG(FATAL) << "Failed to open webcam: " << device_id;
+      LOG(fatal) << "Failed to open webcam: " << device_id;
     }
     cap_ >> cv_img;
   } else if (video_type_ == VideoDataParameter_VideoType_VIDEO) {
     CHECK(video_data_param.has_video_file()) << "Must provide video file!";
     const string& video_file = video_data_param.video_file();
     if (!cap_.open(video_file)) {
-      LOG(FATAL) << "Failed to open video: " << video_file;
+      LOG(fatal) << "Failed to open video: " << video_file;
     }
     total_frames_ = cap_.get(CV_CAP_PROP_FRAME_COUNT);
     processed_frames_ = 0;
@@ -57,7 +57,7 @@ void VideoDataLayer<Dtype>::DataLayerSetUp(
     // Set index back to the first frame.
     cap_.set(CV_CAP_PROP_POS_FRAMES, 0);
   } else {
-    LOG(FATAL) << "Unknow video type!";
+    LOG(fatal) << "Unknow video type!";
   }
   CHECK(cv_img.data) << "Could not load image!";
   // Use data_transformer to infer the expected blob shape from a cv_image.
@@ -68,7 +68,7 @@ void VideoDataLayer<Dtype>::DataLayerSetUp(
   for (int i = 0; i < this->PREFETCH_COUNT; ++i) {
     this->prefetch_[i].data_.Reshape(top_shape_);
   }
-  LOG(INFO) << "output data size: " << top[0]->num() << ","
+  LOG(info) << "output data size: " << top[0]->num() << ","
       << top[0]->channels() << "," << top[0]->height() << ","
       << top[0]->width();
   // label
@@ -114,13 +114,13 @@ void VideoDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
       cap_ >> cv_img;
     } else if (video_type_ == VideoDataParameter_VideoType_VIDEO) {
       if (processed_frames_ >= total_frames_) {
-        LOG(INFO) << "Finished processing video.";
+        LOG(info) << "Finished processing video.";
         raise(SIGINT);
       }
       ++processed_frames_;
       cap_ >> cv_img;
     } else {
-      LOG(FATAL) << "Unknown video type.";
+      LOG(fatal) << "Unknown video type.";
     }
     CHECK(cv_img.data) << "Could not load image!";
     read_time += timer.MicroSeconds();
@@ -136,9 +136,9 @@ void VideoDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   }
   timer.Stop();
   batch_timer.Stop();
-  DLOG(INFO) << "Prefetch batch: " << batch_timer.MilliSeconds() << " ms.";
-  DLOG(INFO) << "     Read time: " << read_time / 1000 << " ms.";
-  DLOG(INFO) << "Transform time: " << trans_time / 1000 << " ms.";
+  DLOG(info) << "Prefetch batch: " << batch_timer.MilliSeconds() << " ms.";
+  DLOG(info) << "     Read time: " << read_time / 1000 << " ms.";
+  DLOG(info) << "Transform time: " << trans_time / 1000 << " ms.";
 }
 
 INSTANTIATE_CLASS(VideoDataLayer);

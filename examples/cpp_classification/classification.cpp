@@ -260,6 +260,6 @@ int main(int argc, char** argv) {
 }
 #else
 int main(int argc, char** argv) {
-  LOG(FATAL) << "This example requires OpenCV; compile with USE_OPENCV.";
+  LOG(fatal) << "This example requires OpenCV; compile with USE_OPENCV.";
 }
 #endif  // USE_OPENCV

@@ -34,7 +34,7 @@ int64_t cluster_seedgen(void) {
     return seed;
   }
 
-  LOG(INFO) << "System entropy source not available, "
+  LOG(info) << "System entropy source not available, "
               "using fallback algorithm to generate seed instead.";
   if (f)
     fclose(f);
@@ -51,7 +51,7 @@ int static_errorHandler(int status, const char* func_name, const char* err_msg, 
 {
 #ifndef USE_GLOG
     std::stringstream ss;
-    LOG(WARNING) << "Exception at" << caffe::print_callstack(0, true, ss) << "[" << file_name << ":" << line << " " << func_name << "] " << err_msg;
+    LOG(warning) << "Exception at" << caffe::print_callstack(0, true, ss) << "[" << file_name << ":" << line << " " << func_name << "] " << err_msg;
     throw caffe::ExceptionWithCallStack<cv::Exception>(cv::Exception(status, err_msg, func_name, file_name, line), ss.str());
 #endif
     return 0;
@@ -59,7 +59,7 @@ int static_errorHandler(int status, const char* func_name, const char* err_msg, 
 #endif
 
 void GlobalInit(int* pargc, char*** pargv) {
-    LOG(INFO) << "Installing opencv error handler";
+    LOG(info) << "Installing opencv error handler";
 #if defined(USE_OPENCV) && !defined(USE_GLOG)
     cv::redirectError(&static_errorHandler);
 #endif
@@ -126,14 +126,14 @@ Caffe::Caffe()
   // Try to create a cublas handler, and report an error if failed (but we will
   // keep the program running as one might just want to run CPU code).
   if (cublasCreate(&cublas_handle_) != CUBLAS_STATUS_SUCCESS) {
-    LOG(ERROR) << "Cannot create Cublas handle. Cublas won't be available.";
+    LOG(error) << "Cannot create Cublas handle. Cublas won't be available.";
   }
   // Try to create a curand handler.
   if (curandCreateGenerator(&curand_generator_, CURAND_RNG_PSEUDO_DEFAULT)
       != CURAND_STATUS_SUCCESS ||
       curandSetPseudoRandomGeneratorSeed(curand_generator_, cluster_seedgen())
       != CURAND_STATUS_SUCCESS) {
-    LOG(ERROR) << "Cannot create Curand generator. Curand won't be available.";
+    LOG(error) << "Cannot create Curand generator. Curand won't be available.";
   }
 }
 
@@ -153,7 +153,7 @@ void Caffe::set_random_seed(const unsigned int seed) {
     CURAND_CHECK(curandSetGeneratorOffset(curand_generator(), 0));
   } else {
     if (!g_curand_availability_logged) {
-        LOG(ERROR) <<
+        LOG(error) <<
             "Curand not available. Skipping setting the curand seed.";
         g_curand_availability_logged = true;
     }
@@ -190,29 +190,29 @@ void Caffe::DeviceQuery() {
     return;
   }
   CUDA_CHECK(cudaGetDeviceProperties(&prop, device));
-  LOG(INFO) << "Device id:                     " << device;
-  LOG(INFO) << "Major revision number:         " << prop.major;
-  LOG(INFO) << "Minor revision number:         " << prop.minor;
-  LOG(INFO) << "Name:                          " << prop.name;
-  LOG(INFO) << "Total global memory:           " << prop.totalGlobalMem;
-  LOG(INFO) << "Total shared memory per block: " << prop.sharedMemPerBlock;
-  LOG(INFO) << "Total registers per block:     " << prop.regsPerBlock;
-  LOG(INFO) << "Warp size:                     " << prop.warpSize;
-  LOG(INFO) << "Maximum memory pitch:          " << prop.memPitch;
-  LOG(INFO) << "Maximum threads per block:     " << prop.maxThreadsPerBlock;
-  LOG(INFO) << "Maximum dimension of block:    "
+  LOG(info) << "Device id:                     " << device;
+  LOG(info) << "Major revision number:         " << prop.major;
+  LOG(info) << "Minor revision number:         " << prop.minor;
+  LOG(info) << "Name:                          " << prop.name;
+  LOG(info) << "Total global memory:           " << prop.totalGlobalMem;
+  LOG(info) << "Total shared memory per block: " << prop.sharedMemPerBlock;
+  LOG(info) << "Total registers per block:     " << prop.regsPerBlock;
+  LOG(info) << "Warp size:                     " << prop.warpSize;
+  LOG(info) << "Maximum memory pitch:          " << prop.memPitch;
+  LOG(info) << "Maximum threads per block:     " << prop.maxThreadsPerBlock;
+  LOG(info) << "Maximum dimension of block:    "
       << prop.maxThreadsDim[0] << ", " << prop.maxThreadsDim[1] << ", "
       << prop.maxThreadsDim[2];
-  LOG(INFO) << "Maximum dimension of grid:     "
+  LOG(info) << "Maximum dimension of grid:     "
       << prop.maxGridSize[0] << ", " << prop.maxGridSize[1] << ", "
       << prop.maxGridSize[2];
-  LOG(INFO) << "Clock rate:                    " << prop.clockRate;
-  LOG(INFO) << "Total constant memory:         " << prop.totalConstMem;
-  LOG(INFO) << "Texture alignment:             " << prop.textureAlignment;
-  LOG(INFO) << "Concurrent copy and execution: "
+  LOG(info) << "Clock rate:                    " << prop.clockRate;
+  LOG(info) << "Total constant memory:         " << prop.totalConstMem;
+  LOG(info) << "Texture alignment:             " << prop.textureAlignment;
+  LOG(info) << "Concurrent copy and execution: "
       << (prop.deviceOverlap ? "Yes" : "No");
-  LOG(INFO) << "Number of multiprocessors:     " << prop.multiProcessorCount;
-  LOG(INFO) << "Kernel execution timeout:      "
+  LOG(info) << "Number of multiprocessors:     " << prop.multiProcessorCount;
+  LOG(info) << "Kernel execution timeout:      "
       << (prop.kernelExecTimeoutEnabled ? "Yes" : "No");
   return;
 }

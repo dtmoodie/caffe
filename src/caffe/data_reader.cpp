@@ -113,10 +113,10 @@ void DataReader<T>::Body::InternalThreadEntry() {
     }
   } catch (boost::thread_interrupted&) {
     // Interrupted exception is expected on shutdown
-    LOG(INFO) << "Data treader thread shutting down as expected";
+    LOG(info) << "Data treader thread shutting down as expected";
   }catch(...)
   {
-    LOG(ERROR) << "Unhandled exception killing data reader thread";
+    LOG(error) << "Unhandled exception killing data reader thread";
   }
 
 }
@@ -131,7 +131,7 @@ void DataReader<T>::Body::read_one(db::Cursor* cursor, QueuePair* qp) {
   // go to the next iter
   cursor->Next();
   if (!cursor->valid()) {
-    DLOG(INFO) << "Restarting data prefetching from start.";
+    DLOG(info) << "Restarting data prefetching from start.";
     cursor->SeekToFirst();
   }
 }

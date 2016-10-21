@@ -85,7 +85,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
     use_rich_annotation_ = use_rich_annotation;
     type_ = type;
     GetTempDirname(filename_.get());
-    LOG(INFO) << "Using temporary dataset " << *filename_;
+    LOG(info) << "Using temporary dataset " << *filename_;
     scoped_ptr<db::DB> db(db::GetDB(backend));
     db->Open(*filename_, db::NEW);
     scoped_ptr<db::Transaction> txn(db->NewTransaction());
@@ -162,7 +162,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
           EXPECT_EQ(blob_top_label_->width(), 8);
           break;
         default:
-          LOG(FATAL) << "Unknown annotation type.";
+          LOG(fatal) << "Unknown annotation type.";
           break;
       }
     } else {
@@ -202,7 +202,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
               }
             }
           } else {
-            LOG(FATAL) << "Unknown annotation type.";
+            LOG(fatal) << "Unknown annotation type.";
           }
         } else {
           EXPECT_EQ(i, label_data[i]);
@@ -224,7 +224,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
                    AnnotatedDatum_AnnotationType type) {
     // Save data of varying shapes.
     GetTempDirname(filename_.get());
-    LOG(INFO) << "Using temporary dataset " << *filename_;
+    LOG(info) << "Using temporary dataset " << *filename_;
     scoped_ptr<db::DB> db(db::GetDB(backend));
     db->Open(*filename_, db::NEW);
     scoped_ptr<db::Transaction> txn(db->NewTransaction());
@@ -294,7 +294,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
           EXPECT_EQ(blob_top_label_->width(), 8);
           break;
         default:
-          LOG(FATAL) << "Unknown annotation type.";
+          LOG(fatal) << "Unknown annotation type.";
           break;
       }
     } else {
@@ -345,7 +345,7 @@ class AnnotatedDataLayerTest : public MultiDeviceTest<TypeParam> {
             }
           }
         } else {
-          LOG(FATAL) << "Unknown annotation type.";
+          LOG(fatal) << "Unknown annotation type.";
         }
       } else {
         EXPECT_EQ(iter, label_data[0]);

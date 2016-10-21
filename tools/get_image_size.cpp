@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
   std::ifstream infile(argv[2]);
   if (!infile.good()) {
-    LOG(FATAL) << "Failed to open file: " << argv[2];
+    LOG(fatal) << "Failed to open file: " << argv[2];
   }
   std::vector<std::pair<std::string, std::string> > lines;
   std::string filename, label;
@@ -52,14 +52,14 @@ int main(int argc, char** argv) {
     lines.push_back(std::make_pair(filename, label));
   }
   infile.close();
-  LOG(INFO) << "A total of " << lines.size() << " images.";
+  LOG(info) << "A total of " << lines.size() << " images.";
   
   const string name_id_file = vm["name_id_file"].as<std::string>();
   std::map<string, int> map_name_id;
   if (!name_id_file.empty()) {
     std::ifstream nameidfile(name_id_file.c_str());
     if (!nameidfile.good()) {
-      LOG(FATAL) << "Failed to open name_id_file: " << name_id_file;
+      LOG(fatal) << "Failed to open name_id_file: " << name_id_file;
     }
     std::string name;
     int id;
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
   boost::filesystem::path root_folder(argv[1]);
   std::ofstream outfile(argv[3]);
   if (!outfile.good()) {
-    LOG(FATAL) << "Failed to open file: " << argv[3];
+    LOG(fatal) << "Failed to open file: " << argv[3];
   }
   int height, width;
   int count = 0;
@@ -91,17 +91,17 @@ int main(int argc, char** argv) {
     }
 
     if (++count % 1000 == 0) {
-      LOG(INFO) << "Processed " << count << " files.";
+      LOG(info) << "Processed " << count << " files.";
     }
   }
   // write the last batch
   if (count % 1000 != 0) {
-    LOG(INFO) << "Processed " << count << " files.";
+    LOG(info) << "Processed " << count << " files.";
   }
   outfile.flush();
   outfile.close();
 #else
-  LOG(FATAL)  << "This tool requires OpenCV; compile with USE_OPENCV.";
+  LOG(fatal)  << "This tool requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   return 0;
 }
