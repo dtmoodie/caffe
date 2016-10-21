@@ -4,7 +4,7 @@ endif()
 
 # Known NVIDIA GPU achitectures Caffe can be compiled for.
 # This list will be used for CUDA_ARCH_NAME = All option
-set(Caffe_known_gpu_archs "20 21(20) 30 35 50 60")
+set(Caffe_known_gpu_archs "20 21(20) 30 35 50")
 
 ################################################################################################
 # A function for automatic detection of GPUs installed  (if autodetection is enabled)
@@ -230,6 +230,9 @@ endfunction()
 ################################################################################################
 
 find_package(CUDA 5.5 QUIET)
+if(${CUDA_VERSION} GREATER "7.5")
+  set(Caffe_known_gpu_archs "30 35 50 60")
+endif()
 find_cuda_helper_libs(curand)  # cmake 2.8.7 compartibility which doesn't search for curand
 
 if(NOT CUDA_FOUND)
