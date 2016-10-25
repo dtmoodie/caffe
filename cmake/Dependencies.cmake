@@ -5,12 +5,12 @@ set(Caffe_LINKER_LIBS "")
 
 if(MSVC)
 	# since lmdb requires boost on windows, we need to link against additional boost libraries
-	find_package(Boost 1.46 REQUIRED COMPONENTS system thread date_time chrono filesystem program_options)
+	find_package(Boost 1.46 REQUIRED COMPONENTS system thread date_time chrono filesystem program_options log log_setup)
 	list(APPEND Caffe_LINKER_LIBS "shlwapi.lib")
 	link_directories(${Boost_LIBRARY_DIR_DEBUG})
 	link_directories(${Boost_LIBRARY_DIR_RELEASE})
 else(MSVC)
-	find_package(Boost 1.46 REQUIRED COMPONENTS system thread filesystem)
+	find_package(Boost 1.46 REQUIRED COMPONENTS system thread filesystem log log_setup program_options)
 endif()
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
@@ -34,6 +34,13 @@ IF(USE_GLOG)
     add_definitions(-DGLOG_NO_ABBREVIATED_SEVERITIES)
   endif(MSVC)
 endif(USE_GLOG)
+
+# ---[ google-flags
+if(NOT MSVC OR USE_GLOG)
+  include("cmake/External/gflags.cmake")
+  include_directories(SYSTEM ${GFLAGS_INCLUDE_DIRS})
+  list(APPEND Caffe_LINKER_LIBS ${GFLAGS_LIBRARIES})
+endif(NOT MSVC OR USE_GLOG)
 
 # ---[ Google-protobuf
 include(cmake/ProtoBuf.cmake)
@@ -139,18 +146,18 @@ if(BUILD_python)
     find_package(NumPy 1.7.1)
     # Find the matching boost python implementation
     set(version ${PYTHONLIBS_VERSION_STRING})
-    
+
     STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
     find_package(Boost 1.46 COMPONENTS "python-py${boost_py_version}")
     set(Boost_PYTHON_FOUND ${Boost_PYTHON-PY${boost_py_version}_FOUND})
-    
+
     while(NOT "${version}" STREQUAL "" AND NOT Boost_PYTHON_FOUND)
       STRING( REGEX REPLACE "([0-9.]+).[0-9]+" "\\1" version ${version} )
-      
+
       STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
       find_package(Boost 1.46 COMPONENTS "python-py${boost_py_version}")
       set(Boost_PYTHON_FOUND ${Boost_PYTHON-PY${boost_py_version}_FOUND})
-      
+
       STRING( REGEX MATCHALL "([0-9.]+).[0-9]+" has_more_version ${version} )
       if("${has_more_version}" STREQUAL "")
         break()

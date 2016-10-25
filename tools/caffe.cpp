@@ -3,9 +3,13 @@
 namespace bp = boost::python;
 #endif
 
-//#include <gflags/gflags.h>
-//#include <glog/logging.h>
 
+#ifndef _MSC_VER
+#include <gflags/gflags.h>
+#endif
+#ifdef USE_GLOG
+#include <glog/logging.h>
+#endif
 #include <cstring>
 #include <map>
 #include <string>
@@ -429,8 +433,9 @@ int time() {
 RegisterBrewFunction(time);
 
 int main(int argc, char** argv) {
-    
+#if USE_GLOG
   FLAGS_alsologtostderr = 1;
+#endif
   // Set version
   gflags::SetVersionString(AS_STRING(CAFFE_VERSION));
   // Usage message.
