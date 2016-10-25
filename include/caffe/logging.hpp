@@ -7,7 +7,11 @@
 #define COMPACT_GOOGLE_LOG_warning COMPACT_GOOGLE_LOG_WARNING
 #define COMPACT_GOOGLE_LOG_error COMPACT_GOOGLE_LOG_ERROR
 #define COMPACT_GOOGLE_LOG_fatal COMPACT_GOOGLE_LOG_FATAL
-
+#define GLOG_debug GLOG_DEBUG
+#define GLOG_info GLOG_INFO
+#define GLOG_warning GLOG_WARNING
+#define GLOG_error GLOG_ERROR
+#define GLOG_fatal GLOG_FATAL
 
 #ifdef USE_GLOG
 #include <glog/logging.h>

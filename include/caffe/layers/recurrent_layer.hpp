@@ -11,7 +11,7 @@
 #include "caffe/net.hpp"
 #include "caffe/proto/caffe_pb.h"
 #include "caffe/util/format.hpp"
-
+#include "caffe/logging.hpp"
 namespace caffe {
 
 template <typename Dtype> class RecurrentLayer;

@@ -15,7 +15,7 @@
 #include "caffe/layer.hpp"
 #include "caffe/proto/caffe_pb.h"
 #include "caffe/util/bbox_util.hpp"
-
+#include "caffe/logging.hpp"
 using namespace boost::property_tree;  // NOLINT(build/namespaces)
 
 namespace caffe {

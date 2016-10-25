@@ -8,10 +8,11 @@
 #include <vector>
 
 #include "caffe/blob.hpp"
-#include "caffe/common.hpp"
+//#include "caffe/common.hpp"
 #include "caffe/layer.hpp"
 #include "caffe/proto/caffe_pb.h"
-
+#include "caffe/common.hpp"
+#include "caffe/logging.hpp"
 namespace caffe {
 
 /**
