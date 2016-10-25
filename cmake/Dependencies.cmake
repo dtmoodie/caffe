@@ -5,7 +5,11 @@ set(Caffe_LINKER_LIBS "")
 
 if(MSVC)
 	# since lmdb requires boost on windows, we need to link against additional boost libraries
-	find_package(Boost 1.46 REQUIRED COMPONENTS system thread date_time chrono filesystem program_options)
+  if(USE_GLOG)
+	  find_package(Boost 1.46 REQUIRED COMPONENTS system thread date_time chrono filesystem program_options)
+  else(USE_GLOG)
+    find_package(Boost 1.46 REQUIRED COMPONENTS system thread date_time chrono filesystem program_options log log_setup)
+  endif(USE_GLOG)
 	list(APPEND Caffe_LINKER_LIBS "shlwapi.lib")
 	link_directories(${Boost_LIBRARY_DIR_DEBUG})
 	link_directories(${Boost_LIBRARY_DIR_RELEASE})

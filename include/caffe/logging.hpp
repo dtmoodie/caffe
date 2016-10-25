@@ -1,15 +1,16 @@
 #pragma once
 #include "export.hpp"
+// Alias these google log macros so that we can use boost severities everywhere.. The opposite unfortunately does not work
+#define COMPACT_GOOGLE_LOG_trace COMPACT_GOOGLE_LOG_trace
+#define COMPACT_GOOGLE_LOG_debug COMPACT_GOOGLE_LOG_DEBUG
+#define COMPACT_GOOGLE_LOG_info COMPACT_GOOGLE_LOG_INFO
+#define COMPACT_GOOGLE_LOG_warning COMPACT_GOOGLE_LOG_WARNING
+#define COMPACT_GOOGLE_LOG_error COMPACT_GOOGLE_LOG_ERROR
+#define COMPACT_GOOGLE_LOG_fatal COMPACT_GOOGLE_LOG_FATAL
 
 
 #ifdef USE_GLOG
 #include <glog/logging.h>
-#define trace TRACE
-#define debug DEBUG
-#define info INFO
-#define warning WARNING
-#define error ERROR
-#define fatal FATAL
 #else
 
 #define DISCARD_MESSAGE true ? (void)0 : caffe::LogMessageVoidify() & caffe::eat_message().stream()
