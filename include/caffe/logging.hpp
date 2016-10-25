@@ -14,7 +14,7 @@
 
 #define DISCARD_MESSAGE true ? (void)0 : caffe::LogMessageVoidify() & caffe::eat_message().stream()
 
-#ifndef __NVCC__
+#ifndef __CUDA_ARCH__
 #include <boost/log/trivial.hpp>
 #include <functional>
 // This file replaces google logging with boost logging and equivalent macros

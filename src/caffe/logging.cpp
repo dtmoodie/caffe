@@ -10,6 +10,8 @@ using namespace caffe;
 #include <WinBase.h>
 #include <codecvt>
 #pragma comment(lib, "Dbghelp.lib")
+#else
+#include <execinfo.h>
 #endif
 #include <algorithm>
 #include <iostream>
