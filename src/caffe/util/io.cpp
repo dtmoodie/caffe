@@ -8,6 +8,11 @@
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif  // USE_OPENCV
+
+#ifdef _MSC_VER
+#include <io.h>
+#endif // _MSC_VER
+
 #include <stdint.h>
 
 #include <algorithm>
@@ -16,7 +21,7 @@
 #include <vector>
 
 #include "caffe/common.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 #include "caffe/util/io.hpp"
 
 const int kProtoReadBytesLimit = INT_MAX;  // Max size of 2 GB minus 1 byte.

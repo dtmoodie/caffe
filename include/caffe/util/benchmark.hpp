@@ -4,10 +4,10 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "caffe/util/device_alternate.hpp"
-
+#include "caffe/export.hpp"
 namespace caffe {
 
-class Timer {
+class CAFFE_EXPORT Timer {
  public:
   Timer();
   virtual ~Timer();
@@ -37,7 +37,7 @@ class Timer {
   float elapsed_microseconds_;
 };
 
-class CPUTimer : public Timer {
+class CAFFE_EXPORT CPUTimer : public Timer {
  public:
   explicit CPUTimer();
   virtual ~CPUTimer() {}
