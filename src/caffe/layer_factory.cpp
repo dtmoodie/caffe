@@ -87,7 +87,7 @@ namespace caffe {
         return layer_types_str;
     }
 
-    INSTANTIATE_CLASS(LayerFactory)
+INSTANTIATE_CLASS(LayerRegistry);
     
 // Get convolution layer according to engine.
 template <typename Dtype>
