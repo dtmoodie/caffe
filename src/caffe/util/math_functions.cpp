@@ -2,12 +2,13 @@
 #include <boost/random.hpp>
 
 #include <limits>
+#include <algorithm>
 
 #include "caffe/common.hpp"
 #include "caffe/util/math_functions.hpp"
 #include "caffe/util/rng.hpp"
 #ifdef _MSC_VER
-#define __builtin_popcount __popcnt 
+#define __builtin_popcount __popcnt
 #define __builtin_popcountl __popcnt
 #endif
 
@@ -19,8 +20,10 @@
       operation; \
     } \
   } \
-  template CAFFE_EXPORT void caffe_cpu_##name<float>(const int n, const float* x, float* y); \
-  template CAFFE_EXPORT void caffe_cpu_##name<double>(const int n, const double* x, double* y);
+  template CAFFE_EXPORT void caffe_cpu_##name<float>(\
+const int n, const float* x, float* y); \
+  template CAFFE_EXPORT void caffe_cpu_##name<double>(\
+const int n, const double* x, double* y);
 
 namespace caffe {
 DEFINE_CAFFE_CPU_UNARY_FUNC(sign, y[i] = caffe_sign<Dtype>(x[i]));
@@ -97,35 +100,44 @@ void caffe_set(const int N, const Dtype alpha, Dtype* Y) {
     }
 }
 
-template CAFFE_EXPORT void caffe_cpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
+template CAFFE_EXPORT void caffe_cpu_gemm<float>(
+    const CBLAS_TRANSPOSE TransA,
     const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
     const float alpha, const float* A, const float* B, const float beta,
     float* C);
 
-template CAFFE_EXPORT void caffe_cpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+template CAFFE_EXPORT void caffe_cpu_gemv<float>(
+    const CBLAS_TRANSPOSE TransA, const int M, const int N,
     const float alpha, const float* A, const float* x, const float beta,
     float* y);
 
-template CAFFE_EXPORT void caffe_axpy<float>(const int N, const float alpha, const float* X,
+template CAFFE_EXPORT void caffe_axpy<float>(
+    const int N, const float alpha, const float* X,
     float* Y);
 
-template CAFFE_EXPORT void caffe_cpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
+template CAFFE_EXPORT void caffe_cpu_gemm<double>(
+    const CBLAS_TRANSPOSE TransA,
     const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
     const double alpha, const double* A, const double* B, const double beta,
     double* C);
 
-template CAFFE_EXPORT void caffe_cpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+template CAFFE_EXPORT void caffe_cpu_gemv<double>(
+    const CBLAS_TRANSPOSE TransA, const int M, const int N,
     const double alpha, const double* A, const double* x, const double beta,
     double* y);
 
-template CAFFE_EXPORT void caffe_axpy<double>(const int N, const double alpha, const double* X,
+template CAFFE_EXPORT void caffe_axpy<double>(
+    const int N, const double alpha, const double* X,
     double* Y);
 
 
 
-template CAFFE_EXPORT void caffe_set<int>(const int N, const int alpha, int* Y);
-template CAFFE_EXPORT void caffe_set<float>(const int N, const float alpha, float* Y);
-template CAFFE_EXPORT void caffe_set<double>(const int N, const double alpha, double* Y);
+template CAFFE_EXPORT void caffe_set<int>(
+    const int N, const int alpha, int* Y);
+template CAFFE_EXPORT void caffe_set<float>(
+    const int N, const float alpha, float* Y);
+template CAFFE_EXPORT void caffe_set<double>(
+    const int N, const double alpha, double* Y);
 
 template <>
 void caffe_add_scalar(const int N, const float alpha, float* Y) {
@@ -158,12 +170,17 @@ void caffe_copy(const int N, const Dtype* X, Dtype* Y) {
     }
 }
 
-template CAFFE_EXPORT void caffe_copy<bool>(const int N, const bool* X, bool* Y);
-template CAFFE_EXPORT void caffe_copy<int>(const int N, const int* X, int* Y);
-template CAFFE_EXPORT void caffe_copy<unsigned int>(const int N, const unsigned int* X,
+template CAFFE_EXPORT void caffe_copy<bool>(
+    const int N, const bool* X, bool* Y);
+template CAFFE_EXPORT void caffe_copy<int>(
+    const int N, const int* X, int* Y);
+template CAFFE_EXPORT void caffe_copy<unsigned int>(
+    const int N, const unsigned int* X,
     unsigned int* Y);
-template CAFFE_EXPORT void caffe_copy<float>(const int N, const float* X, float* Y);
-template CAFFE_EXPORT void caffe_copy<double>(const int N, const double* X, double* Y);
+template CAFFE_EXPORT void caffe_copy<float>(
+    const int N, const float* X, float* Y);
+template CAFFE_EXPORT void caffe_copy<double>(
+    const int N, const double* X, double* Y);
 
 template <>
 void caffe_scal<float>(const int N, const float alpha, float *X) {
@@ -186,9 +203,11 @@ void caffe_cpu_axpby<double>(const int N, const double alpha, const double* X,
     const double beta, double* Y) {
     cblas_daxpby(N, alpha, X, 1, beta, Y, 1);
 }
-template CAFFE_EXPORT void caffe_cpu_axpby<float>(const int N, const float alpha, const float* X,
+template CAFFE_EXPORT void caffe_cpu_axpby<float>(
+    const int N, const float alpha, const float* X,
     const float beta, float* Y);
-template CAFFE_EXPORT void caffe_cpu_axpby<double>(const int N, const double alpha, const double* X,
+template CAFFE_EXPORT void caffe_cpu_axpby<double>(
+    const int N, const double alpha, const double* X,
     const double beta, double* Y);
 template <>
 void caffe_add<float>(const int n, const float* a, const float* b,
@@ -294,23 +313,39 @@ unsigned int caffe_rng_rand() {
     return (*caffe_rng())();
 }
 
-template CAFFE_EXPORT void caffe_add_scalar<float>(const int N, const float alpha, float *X);
-template CAFFE_EXPORT void caffe_scal<float>(const int N, const float alpha, float *X);
-template CAFFE_EXPORT void caffe_sqr<float>(const int N, const float* a, float* y);
-template CAFFE_EXPORT void caffe_add<float>(const int N, const float* a, const float* b, float* y);
-template CAFFE_EXPORT void caffe_sub<float>(const int N, const float* a, const float* b, float* y);
-template CAFFE_EXPORT void caffe_mul<float>(const int N, const float* a, const float* b, float* y);
-template CAFFE_EXPORT void caffe_div<float>(const int N, const float* a, const float* b, float* y);
-template CAFFE_EXPORT void caffe_powx<float>(const int n, const float* a, const float b, float* y);
+template CAFFE_EXPORT void caffe_add_scalar<float>(
+    const int N, const float alpha, float *X);
+template CAFFE_EXPORT void caffe_scal<float>(
+    const int N, const float alpha, float *X);
+template CAFFE_EXPORT void caffe_sqr<float>(
+    const int N, const float* a, float* y);
+template CAFFE_EXPORT void caffe_add<float>(
+    const int N, const float* a, const float* b, float* y);
+template CAFFE_EXPORT void caffe_sub<float>(
+    const int N, const float* a, const float* b, float* y);
+template CAFFE_EXPORT void caffe_mul<float>(
+    const int N, const float* a, const float* b, float* y);
+template CAFFE_EXPORT void caffe_div<float>(
+    const int N, const float* a, const float* b, float* y);
+template CAFFE_EXPORT void caffe_powx<float>(
+    const int n, const float* a, const float b, float* y);
 
-template CAFFE_EXPORT void caffe_add_scalar<double>(const int N, const double alpha, double *X);
-template CAFFE_EXPORT void caffe_scal<double>(const int N, const double alpha, double *X);
-template CAFFE_EXPORT void caffe_sqr<double>(const int N, const double* a, double* y);
-template CAFFE_EXPORT void caffe_add<double>(const int N, const double* a, const double* b, double* y);
-template CAFFE_EXPORT void caffe_sub<double>(const int N, const double* a, const double* b, double* y);
-template CAFFE_EXPORT void caffe_mul<double>(const int N, const double* a, const double* b, double* y);
-template CAFFE_EXPORT void caffe_div<double>(const int N, const double* a, const double* b, double* y);
-template CAFFE_EXPORT void caffe_powx<double>(const int n, const double* a, const double b, double* y);
+template CAFFE_EXPORT void caffe_add_scalar<double>(
+    const int N, const double alpha, double *X);
+template CAFFE_EXPORT void caffe_scal<double>(
+    const int N, const double alpha, double *X);
+template CAFFE_EXPORT void caffe_sqr<double>(
+    const int N, const double* a, double* y);
+template CAFFE_EXPORT void caffe_add<double>(
+    const int N, const double* a, const double* b, double* y);
+template CAFFE_EXPORT void caffe_sub<double>(
+    const int N, const double* a, const double* b, double* y);
+template CAFFE_EXPORT void caffe_mul<double>(
+    const int N, const double* a, const double* b, double* y);
+template CAFFE_EXPORT void caffe_div<double>(
+    const int N, const double* a, const double* b, double* y);
+template CAFFE_EXPORT void caffe_powx<double>(
+    const int n, const double* a, const double b, double* y);
 
 
 template <typename Dtype>
@@ -328,7 +363,8 @@ void caffe_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype* r) {
     CHECK_GE(n, 0);
     CHECK(r);
     CHECK_LE(a, b);
-    boost::uniform_real<Dtype> random_distribution(a, caffe_nextafter<Dtype>(b));
+    boost::uniform_real<Dtype> random_distribution(
+        a, caffe_nextafter<Dtype>(b));
     boost::variate_generator<caffe::rng_t*, boost::uniform_real<Dtype> >
         variate_generator(caffe_rng(), random_distribution);
     for (int i = 0; i < n; ++i) {
@@ -336,9 +372,11 @@ void caffe_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype* r) {
     }
 }
 
-template CAFFE_EXPORT void caffe_rng_uniform<float>(const int n, const float a, const float b, float* r);
+template CAFFE_EXPORT void caffe_rng_uniform<float>(
+    const int n, const float a, const float b, float* r);
 
-template CAFFE_EXPORT void caffe_rng_uniform<double>(const int n, const double a, const double b, double* r);
+template CAFFE_EXPORT void caffe_rng_uniform<double>(
+    const int n, const double a, const double b, double* r);
 
 template <typename Dtype>
 void caffe_rng_gaussian(const int n, const Dtype a,
@@ -354,10 +392,12 @@ void caffe_rng_gaussian(const int n, const Dtype a,
     }
 }
 
-template CAFFE_EXPORT void caffe_rng_gaussian<float>(const int n, const float mu,
+template CAFFE_EXPORT void caffe_rng_gaussian<float>(
+    const int n, const float mu,
     const float sigma, float* r);
 
-template CAFFE_EXPORT void caffe_rng_gaussian<double>(const int n, const double mu,
+template CAFFE_EXPORT void caffe_rng_gaussian<double>(
+    const int n, const double mu,
     const double sigma, double* r);
 
 template <typename Dtype>
@@ -367,16 +407,19 @@ void caffe_rng_bernoulli(const int n, const Dtype p, int* r) {
     CHECK_GE(p, 0);
     CHECK_LE(p, 1);
     boost::bernoulli_distribution<Dtype> random_distribution(p);
-    boost::variate_generator<caffe::rng_t*, boost::bernoulli_distribution<Dtype> >
+    boost::variate_generator<caffe::rng_t*, 
+        boost::bernoulli_distribution<Dtype> >
         variate_generator(caffe_rng(), random_distribution);
     for (int i = 0; i < n; ++i) {
         r[i] = variate_generator();
     }
 }
 
-template CAFFE_EXPORT void caffe_rng_bernoulli<double>(const int n, const double p, int* r);
+template CAFFE_EXPORT void caffe_rng_bernoulli<double>(
+    const int n, const double p, int* r);
 
-template CAFFE_EXPORT void caffe_rng_bernoulli<float>(const int n, const float p, int* r);
+template CAFFE_EXPORT void caffe_rng_bernoulli<float>(
+    const int n, const float p, int* r);
 
 template <typename Dtype>
 void caffe_rng_bernoulli(const int n, const Dtype p, unsigned int* r) {
@@ -385,19 +428,23 @@ void caffe_rng_bernoulli(const int n, const Dtype p, unsigned int* r) {
     CHECK_GE(p, 0);
     CHECK_LE(p, 1);
     boost::bernoulli_distribution<Dtype> random_distribution(p);
-    boost::variate_generator<caffe::rng_t*, boost::bernoulli_distribution<Dtype> >
+    boost::variate_generator<caffe::rng_t*, 
+        boost::bernoulli_distribution<Dtype> >
         variate_generator(caffe_rng(), random_distribution);
     for (int i = 0; i < n; ++i) {
         r[i] = static_cast<unsigned int>(variate_generator());
     }
 }
 
-template CAFFE_EXPORT void caffe_rng_bernoulli<double>(const int n, const double p, unsigned int* r);
+template CAFFE_EXPORT void caffe_rng_bernoulli<double>(
+    const int n, const double p, unsigned int* r);
 
-template CAFFE_EXPORT void caffe_rng_bernoulli<float>(const int n, const float p, unsigned int* r);
+template CAFFE_EXPORT void caffe_rng_bernoulli<float>(
+    const int n, const float p, unsigned int* r);
 
 template <>
-float caffe_cpu_strided_dot<float>(const int n, const float* x, const int incx,
+float caffe_cpu_strided_dot<float>(
+    const int n, const float* x, const int incx,
     const float* y, const int incy) {
     return cblas_sdot(n, x, incx, y, incy);
 }
@@ -413,9 +460,11 @@ Dtype caffe_cpu_dot(const int n, const Dtype* x, const Dtype* y) {
     return caffe_cpu_strided_dot(n, x, 1, y, 1);
 }
 
-template CAFFE_EXPORT float caffe_cpu_dot<float>(const int n, const float* x, const float* y);
+template CAFFE_EXPORT float caffe_cpu_dot<float>(
+    const int n, const float* x, const float* y);
 
-template CAFFE_EXPORT double caffe_cpu_dot<double>(const int n, const double* x, const double* y);
+template CAFFE_EXPORT double caffe_cpu_dot<double>(
+    const int n, const double* x, const double* y);
 
 template <>
 float caffe_cpu_asum<float>(const int n, const float* x) {
@@ -441,11 +490,15 @@ void caffe_cpu_scale<double>(const int n, const double alpha, const double *x,
     cblas_dscal(n, alpha, y, 1);
 }
 
-template CAFFE_EXPORT float caffe_cpu_asum<float>(const int n, const float* x);
-template CAFFE_EXPORT void caffe_cpu_scale<float>(const int n, const float alpha, const float* x, float* y);
+template CAFFE_EXPORT float caffe_cpu_asum<float>(
+    const int n, const float* x);
+template CAFFE_EXPORT void caffe_cpu_scale<float>(
+    const int n, const float alpha, const float* x, float* y);
 
-template CAFFE_EXPORT double caffe_cpu_asum<double>(const int n, const double* x);
-template CAFFE_EXPORT void caffe_cpu_scale<double>(const int n, const double alpha, const double* x, double* y);
+template CAFFE_EXPORT double caffe_cpu_asum<double>(
+    const int n, const double* x);
+template CAFFE_EXPORT void caffe_cpu_scale<double>(
+    const int n, const double alpha, const double* x, double* y);
 
 template <typename Dtype>
 void caffe_cpu_eltwise_max(const int N, const Dtype alpha, const Dtype* x,

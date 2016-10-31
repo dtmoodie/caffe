@@ -67,7 +67,7 @@ void CuDNNBatchNormLayer<Dtype>::Backward_gpu(
   double epsilon = max(this->eps_, CUDNN_BN_MIN_EPSILON);
 
   // call Batch Normalization Backward
-  
+
 #if CUDNN_VERSION >= 4005
   CUDNN_CHECK(cudnnBatchNormalizationBackward(
       Caffe::cudnn_handle(), mode_,
@@ -90,7 +90,6 @@ void CuDNNBatchNormLayer<Dtype>::Backward_gpu(
       scale_data, scale_diff, bias_diff,
       epsilon, save_mean, save_inv_var));
 #endif
-
 }
 
 INSTANTIATE_LAYER_GPU_FUNCS(CuDNNBatchNormLayer);

@@ -21,7 +21,8 @@ CAFFE_EXPORT void caffe_cpu_gemm(const CBLAS_TRANSPOSE TransA,
     Dtype* C);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_cpu_gemv(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+CAFFE_EXPORT void caffe_cpu_gemv(const CBLAS_TRANSPOSE TransA,
+    const int M, const int N,
     const Dtype alpha, const Dtype* A, const Dtype* x, const Dtype beta,
     Dtype* y);
 
@@ -30,17 +31,20 @@ CAFFE_EXPORT void caffe_axpy(const int N, const Dtype alpha, const Dtype* X,
     Dtype* Y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_cpu_axpby(const int N, const Dtype alpha, const Dtype* X,
+CAFFE_EXPORT void caffe_cpu_axpby(const int N,
+    const Dtype alpha, const Dtype* X,
     const Dtype beta, Dtype* Y);
 
 // y[i] = max(a * x[i], b * y[i])
 template <typename Dtype>
-CAFFE_EXPORT void caffe_cpu_eltwise_max(const int N, const Dtype alpha, const Dtype* X,
+CAFFE_EXPORT void caffe_cpu_eltwise_max(const int N,
+    const Dtype alpha, const Dtype* X,
     const Dtype beta, Dtype* Y);
 
 // y[i] = min(a * x[i], b * y[i])
 template <typename Dtype>
-CAFFE_EXPORT void caffe_cpu_eltwise_min(const int N, const Dtype alpha, const Dtype* X,
+CAFFE_EXPORT void caffe_cpu_eltwise_min(const int N,
+    const Dtype alpha, const Dtype* X,
     const Dtype beta, Dtype* Y);
 
 template <typename Dtype>
@@ -63,19 +67,24 @@ template <typename Dtype>
 CAFFE_EXPORT void caffe_sqr(const int N, const Dtype* a, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_add(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_add(const int N, const Dtype* a,
+    const Dtype* b, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_sub(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_sub(const int N, const Dtype* a,
+    const Dtype* b, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_mul(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_mul(const int N, const Dtype* a,
+    const Dtype* b, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_div(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_div(const int N, const Dtype* a,
+    const Dtype* b, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_powx(const int n, const Dtype* a, const Dtype b, Dtype* y);
+CAFFE_EXPORT void caffe_powx(const int n, const Dtype* a,
+    const Dtype b, Dtype* y);
 
 CAFFE_EXPORT unsigned int caffe_rng_rand();
 
@@ -83,32 +92,41 @@ template <typename Dtype>
 CAFFE_EXPORT Dtype caffe_nextafter(const Dtype b);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype* r);
+CAFFE_EXPORT void caffe_rng_uniform(const int n,
+    const Dtype a, const Dtype b, Dtype* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_rng_gaussian(const int n, const Dtype mu, const Dtype sigma,
+CAFFE_EXPORT void caffe_rng_gaussian(const int n,
+    const Dtype mu, const Dtype sigma,
                         Dtype* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_rng_bernoulli(const int n, const Dtype p, int* r);
+CAFFE_EXPORT void caffe_rng_bernoulli(const int n,
+    const Dtype p, int* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_rng_bernoulli(const int n, const Dtype p, unsigned int* r);
+CAFFE_EXPORT void caffe_rng_bernoulli(const int n,
+    const Dtype p, unsigned int* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_exp(const int n, const Dtype* a, Dtype* y);
+CAFFE_EXPORT void caffe_exp(const int n,
+    const Dtype* a, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_log(const int n, const Dtype* a, Dtype* y);
+CAFFE_EXPORT void caffe_log(const int n,
+    const Dtype* a, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_abs(const int n, const Dtype* a, Dtype* y);
+CAFFE_EXPORT void caffe_abs(const int n,
+    const Dtype* a, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT Dtype caffe_cpu_dot(const int n, const Dtype* x, const Dtype* y);
+CAFFE_EXPORT Dtype caffe_cpu_dot(const int n,
+    const Dtype* x, const Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT Dtype caffe_cpu_strided_dot(const int n, const Dtype* x, const int incx,
+CAFFE_EXPORT Dtype caffe_cpu_strided_dot(const int n,
+    const Dtype* x, const int incx,
     const Dtype* y, const int incy);
 
 // Returns the sum of the absolute values of the elements of vector x
@@ -144,7 +162,8 @@ DECLARE_CAFFE_CPU_UNARY_FUNC(sgnbit);
 DECLARE_CAFFE_CPU_UNARY_FUNC(fabs);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_cpu_scale(const int n, const Dtype alpha, const Dtype *x, Dtype* y);
+CAFFE_EXPORT void caffe_cpu_scale(const int n, const Dtype alpha,
+    const Dtype *x, Dtype* y);
 
 #ifndef CPU_ONLY  // GPU
 
@@ -158,17 +177,18 @@ CAFFE_EXPORT void caffe_gpu_gemm(const CBLAS_TRANSPOSE TransA,
     Dtype* C);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_gemv(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+CAFFE_EXPORT void caffe_gpu_gemv(const CBLAS_TRANSPOSE TransA,
+    const int M, const int N,
     const Dtype alpha, const Dtype* A, const Dtype* x, const Dtype beta,
     Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_axpy(const int N, const Dtype alpha, const Dtype* X,
-    Dtype* Y);
+CAFFE_EXPORT void caffe_gpu_axpy(const int N, const Dtype alpha,
+    const Dtype* X, Dtype* Y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_axpby(const int N, const Dtype alpha, const Dtype* X,
-    const Dtype beta, Dtype* Y);
+CAFFE_EXPORT void caffe_gpu_axpby(const int N, const Dtype alpha,
+    const Dtype* X, const Dtype beta, Dtype* Y);
 
 CAFFE_EXPORT void caffe_gpu_memcpy(const size_t N, const void *X, void *Y);
 
@@ -178,27 +198,33 @@ CAFFE_EXPORT void caffe_gpu_set(const int N, const Dtype alpha, Dtype *X);
 CAFFE_EXPORT void caffe_gpu_memset(const size_t N, const int alpha, void* X);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_add_scalar(const int N, const Dtype alpha, Dtype *X);
+CAFFE_EXPORT void caffe_gpu_add_scalar(const int N, const Dtype alpha,
+    Dtype *X);
 
 template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_scal(const int N, const Dtype alpha, Dtype* X);
 
 #ifndef CPU_ONLY
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_scal(const int N, const Dtype alpha, Dtype* X, cudaStream_t str);
+CAFFE_EXPORT void caffe_gpu_scal(const int N, const Dtype alpha, Dtype* X,
+    cudaStream_t str);
 #endif
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_add(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_add(const int N, const Dtype* a, const Dtype* b,
+    Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_sub(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_sub(const int N, const Dtype* a, const Dtype* b,
+    Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_mul(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_mul(const int N, const Dtype* a, const Dtype* b,
+    Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_div(const int N, const Dtype* a, const Dtype* b, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_div(const int N, const Dtype* a, const Dtype* b,
+    Dtype* y);
 
 template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_abs(const int n, const Dtype* a, Dtype* y);
@@ -210,7 +236,8 @@ template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_log(const int n, const Dtype* a, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_powx(const int n, const Dtype* a, const Dtype b, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_powx(const int n, const Dtype* a, const Dtype b,
+    Dtype* y);
 
 // caffe_gpu_rng_uniform with two arguments generates integers in the range
 // [0, UINT_MAX].
@@ -222,17 +249,19 @@ CAFFE_EXPORT void caffe_gpu_rng_uniform(const int n, unsigned int* r);
 // curandGenerateUniform; with other limits will shift and scale the outputs
 // appropriately after calling curandGenerateUniform.
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype* r);
+CAFFE_EXPORT void caffe_gpu_rng_uniform(const int n, const Dtype a,
+    const Dtype b, Dtype* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_rng_gaussian(const int n, const Dtype mu, const Dtype sigma,
-                            Dtype* r);
+CAFFE_EXPORT void caffe_gpu_rng_gaussian(const int n, const Dtype mu,
+    const Dtype sigma, Dtype* r);
 
 template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_rng_bernoulli(const int n, const Dtype p, int* r);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_dot(const int n, const Dtype* x, const Dtype* y, Dtype* out);
+CAFFE_EXPORT void caffe_gpu_dot(const int n, const Dtype* x, const Dtype* y,
+    Dtype* out);
 
 template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_asum(const int n, const Dtype* x, Dtype* y);
@@ -247,20 +276,18 @@ template <typename Dtype>
 CAFFE_EXPORT void caffe_gpu_fabs(const int n, const Dtype* x, Dtype* y);
 
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_scale(const int n, const Dtype alpha, const Dtype *x, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_scale(const int n, const Dtype alpha,
+    const Dtype *x, Dtype* y);
 
 // y[i] = max(a * x[i], b * y[i])
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_eltwise_max(const int n, const Dtype alpha, const Dtype* x,
-    const Dtype beta, Dtype* y);
+CAFFE_EXPORT void caffe_gpu_eltwise_max(const int n, const Dtype alpha,
+    const Dtype* x, const Dtype beta, Dtype* y);
 
 // y[i] = min(a * x[i], b * y[i])
 template <typename Dtype>
-CAFFE_EXPORT void caffe_gpu_eltwise_min(const int n, const Dtype alpha, const Dtype* x,
-    const Dtype beta, Dtype* y);
-
-
-
+CAFFE_EXPORT void caffe_gpu_eltwise_min(const int n, const Dtype alpha,
+    const Dtype* x, const Dtype beta, Dtype* y);
 
 #endif  // !CPU_ONLY
 

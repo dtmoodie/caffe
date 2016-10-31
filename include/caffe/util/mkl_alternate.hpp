@@ -17,7 +17,8 @@ extern "C" {
 // A simple way to define the vsl unary functions. The operation should
 // be in the form e.g. y[i] = sqrt(a[i])
 #define DECLARE_VSL_UNARY_FUNC(name) \
-    template<typename Dtype> CAFFE_EXPORT void v##name(const int n, const Dtype* a, Dtype* y);
+  template<typename Dtype> CAFFE_EXPORT \
+    void v##name(const int n, const Dtype* a, Dtype* y);
 
 DECLARE_VSL_UNARY_FUNC(Sqr);
 DECLARE_VSL_UNARY_FUNC(Exp);
@@ -26,13 +27,15 @@ DECLARE_VSL_UNARY_FUNC(Abs);
 
 
 #define DECLARE_VSL_UNARY_FUNC_WITH_PARAM(name) \
-    template<typename Dtype> CAFFE_EXPORT void v##name(const int n, const Dtype* a, const Dtype b, Dtype* y);
+  template<typename Dtype> CAFFE_EXPORT void v##name(\
+    const int n, const Dtype* a, const Dtype b, Dtype* y);
 
 DECLARE_VSL_UNARY_FUNC_WITH_PARAM(Powx);
 
 
 #define DECLARE_VSL_BINARY_FUNC(name) \
-template<typename Dtype> CAFFE_EXPORT void v##name(const int n, const Dtype* a, const Dtype* b, Dtype* y);
+template<typename Dtype> CAFFE_EXPORT void v##name(\
+  const int n, const Dtype* a, const Dtype* b, Dtype* y);
 
 DECLARE_VSL_BINARY_FUNC(Add);
 DECLARE_VSL_BINARY_FUNC(Sub);

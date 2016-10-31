@@ -92,7 +92,8 @@ class CAFFE_EXPORT DevicePair {
 
 // Synchronous data parallelism using map-reduce between local GPUs.
 template<typename Dtype>
-class CAFFE_EXPORT P2PSync : public GPUParams<Dtype>, public Solver<Dtype>::Callback,
+class CAFFE_EXPORT P2PSync : public GPUParams<Dtype>,
+    public Solver<Dtype>::Callback,
     public InternalThread {
  public:
   explicit P2PSync(shared_ptr<Solver<Dtype> > root_solver,

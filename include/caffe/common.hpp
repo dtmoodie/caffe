@@ -2,7 +2,6 @@
 #define CAFFE_COMMON_HPP_
 
 #include <boost/shared_ptr.hpp>
-//#include <gflags/gflags.h>
 #include <glog/logging.h>
 
 #include <climits>
@@ -16,8 +15,9 @@
 #include <utility>  // pair
 #include <vector>
 
-#include "caffe/util/device_alternate.hpp"
 #include "caffe/export.hpp"
+#include "caffe/util/device_alternate.hpp"
+
 // Convert macro to string
 #define STRINGIFY(m) #m
 #define AS_STRING(m) STRINGIFY(m)

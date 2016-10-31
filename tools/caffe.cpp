@@ -2,8 +2,7 @@
 #include "boost/python.hpp"
 namespace bp = boost::python;
 #endif
-
-
+#include <glog/logging.h>
 
 #include <cstring>
 #include <map>
@@ -14,7 +13,7 @@ namespace bp = boost::python;
 #include "caffe/caffe.hpp"
 #include "caffe/util/gpu_memory.hpp"
 #include "caffe/util/signal_handler.h"
-#include <glog/logging.h>
+
 
 // Load the weights from the specified caffemodel(s) into the train and
 // test nets.
@@ -490,15 +489,13 @@ static void get_gpus(vector<int>* gpus, std::string FLAGS_gpu) {
         for (int i = 0; i < count; ++i) {
             gpus->push_back(i);
         }
-    }
-    else if (FLAGS_gpu.size()) {
+    } else if ( FLAGS_gpu.size() ) {
         vector<string> strings;
         boost::split(strings, FLAGS_gpu, boost::is_any_of(","));
         for (int i = 0; i < strings.size(); ++i) {
             gpus->push_back(boost::lexical_cast<int>(strings[i]));
         }
-    }
-    else {
+    } else {
         CHECK_EQ(gpus->size(), 0);
     }
 }
@@ -508,9 +505,12 @@ int main(int argc, char** argv)
     // Print output to stderr (while still logging).
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
-    ("solver", boost::program_options::value<std::string>(), "The solver definition protocol buffer text file.")
-    ("model", boost::program_options::value<std::string>(), "The model definition protocol buffer text file..")
-    ("snapshot", boost::program_options::value<std::string>(), "Optional; the snapshot solver state to resume training.")
+    ("solver", boost::program_options::value<std::string>(),
+        "The solver definition protocol buffer text file.")
+    ("model", boost::program_options::value<std::string>(),
+        "The model definition protocol buffer text file..")
+    ("snapshot", boost::program_options::value<std::string>(),
+        "Optional; the snapshot solver state to resume training.")
     ("weights", boost::program_options::value<std::string>(),
         "Optional; the pretrained weights to initialize finetuning, "
         "separated by ','. Cannot be set simultaneously with snapshot.")
@@ -518,9 +518,14 @@ int main(int argc, char** argv)
             "Optional; run in GPU mode on given device IDs separated by ','."
             "Use '-gpu all' to run on all available GPUs. The effective training "
             "batch size is multiplied by the number of devices.")
-    ("iterations", boost::program_options::value<int>()->default_value(50), "The number of iterations to run.")
-    ("sigint_effect", boost::program_options::value<std::string>()->default_value("stop"), "Optional; action to take when a SIGINT signal is received: snapshot, stop or none.")
-    ("sighup_effect", boost::program_options::value<std::string>()->default_value("snapshot"), "Optional; action to take when a SIGHUP signal is received: "
+    ("iterations", boost::program_options::value<int>()->default_value(50),
+        "The number of iterations to run.")
+    ("sigint_effect", boost::program_options::value<std::string>()->
+        default_value("stop"), "Optional; action to take when a SIGINT "
+        "signal is received: snapshot, stop or none.")
+    ("sighup_effect", boost::program_options::value<std::string>()->
+        default_value("snapshot"), "Optional; action to take when a SIGHUP"
+        " signal is received: "
             "snapshot, stop or none.");
     if (argc < 2)
     {
@@ -530,20 +535,26 @@ int main(int argc, char** argv)
     //caffe::GlobalInit(&argc, &argv);
     auto brew_function = boost::lexical_cast<std::string>(argv[1]);
     boost::program_options::variables_map vm;
-    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+    boost::program_options::store(
+        boost::program_options::parse_command_line(
+            argc, argv, desc), vm);
     if (brew_function == "train")
     {
         if (vm.count("solver"))
         {
             caffe::SolverParameter solver_param;
-            caffe::ReadSolverParamsFromTextFileOrDie(vm["solver"].as<std::string>(), &solver_param);
+            caffe::ReadSolverParamsFromTextFileOrDie(
+                vm["solver"].as<std::string>(),
+                &solver_param);
             // If the gpus flag is not provided, allow the mode and device to be set
             // in the solver prototxt.
-            if (solver_param.solver_mode() == caffe::SolverParameter_SolverMode_GPU)
+            if (solver_param.solver_mode() == 
+                caffe::SolverParameter_SolverMode_GPU)
             {
                 std::string gpu;
                 if (solver_param.has_device_id()) {
-                    gpu = "" + boost::lexical_cast<std::string>(solver_param.device_id());
+                    gpu = "" + boost::lexical_cast<std::string>(
+                        solver_param.device_id());
                 }
                 else
                 {  // Set default GPU if unspecified
@@ -576,13 +587,15 @@ int main(int argc, char** argv)
                     GetRequestedAction(vm["sighup_effect"].as<std::string>()));
 
                 boost::shared_ptr<caffe::Solver<float> >
-                    solver(caffe::SolverRegistry<float>::CreateSolver(solver_param));
+                    solver(caffe::SolverRegistry<float>::CreateSolver(
+                        solver_param));
 
                 solver->SetActionFunction(signal_handler.GetActionFunction());
 
                 if (vm.count("snapshot"))
                 {
-                    LOG(INFO) << "Resuming from " << vm["snapshot"].as<std::string>();
+                    LOG(INFO) << "Resuming from " << 
+                        vm["snapshot"].as<std::string>();
                     solver->Restore(vm["snapshot"].as<std::string>().c_str());
                 }
                 else if (vm.count("weight"))
@@ -592,7 +605,8 @@ int main(int argc, char** argv)
 
                 if (gpus.size() > 1)
                 {
-                    caffe::P2PSync<float> sync(solver, 0, gpus.size(), solver->param());
+                    caffe::P2PSync<float> sync(solver, 0, 
+                        gpus.size(), solver->param());
                     sync.Run(gpus);
                 }
                 else
@@ -652,8 +666,10 @@ int main(int argc, char** argv)
                         else {
                             test_score[idx] += score;
                         }
-                        const std::string& output_name = caffe_net.blob_names()[caffe_net.output_blob_indices()[j]];
-                        LOG(INFO) << "Batch " << i << ", " << output_name << " = " << score;
+                        const std::string& output_name = 
+                            caffe_net.blob_names()[caffe_net.output_blob_indices()[j]];
+                        LOG(INFO) << "Batch " << i << ", "
+                            << output_name << " = " << score;
                     }
                 }
             }
@@ -672,12 +688,14 @@ int main(int argc, char** argv)
                     loss_msg_stream << " (* " << loss_weight
                         << " = " << loss_weight * mean_score << " loss)";
                 }
-                LOG(INFO) << output_name << " = " << mean_score << loss_msg_stream.str();
+                LOG(INFO) << output_name << " = " << mean_score
+                    << loss_msg_stream.str();
             }
         }
         else
         {
-            std::cout << "Must define model, weights, and iterations for testing\n";
+            std::cout << "Must define model, weights, and "
+                "iterations for testing\n";
             std::cout << desc;
         }
         return 0;

@@ -17,14 +17,12 @@ const unsigned int GPUMemory::Manager::MIN_BIN = 6;
 const unsigned int GPUMemory::Manager::MAX_BIN = 22;
 const size_t GPUMemory::Manager::MAX_CACHED_BYTES = (size_t) -1;
 
-GPUMemory::Manager& GPUMemory::mgr()
-{
+GPUMemory::Manager& GPUMemory::mgr(){
     static Manager* mgr = nullptr;
-    if(mgr == nullptr)
+    if (mgr == nullptr)
         mgr = new Manager;
     return *mgr;
 }
-//GPUMemory::Manager GPUMemory::mgr_;
 
 GPUMemory::Manager::Manager()
   : mode_(CUDA_MALLOC), debug_(false), initialized_(false),

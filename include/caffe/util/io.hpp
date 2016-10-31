@@ -63,7 +63,8 @@ inline void ReadProtoFromTextFileOrDie(const string& filename, Message* proto) {
   ReadProtoFromTextFileOrDie(filename.c_str(), proto);
 }
 
-CAFFE_EXPORT void WriteProtoToTextFile(const Message& proto, const char* filename);
+CAFFE_EXPORT void WriteProtoToTextFile(const Message& proto,
+    const char* filename);
 
 inline void WriteProtoToTextFile(const Message& proto, const string& filename) {
   WriteProtoToTextFile(proto, filename.c_str());
@@ -85,13 +86,15 @@ inline void ReadProtoFromBinaryFileOrDie(const string& filename,
 }
 
 
-CAFFE_EXPORT void WriteProtoToBinaryFile(const Message& proto, const char* filename);
+CAFFE_EXPORT void WriteProtoToBinaryFile(const Message& proto,
+    const char* filename);
 inline void WriteProtoToBinaryFile(
     const Message& proto, const string& filename) {
   WriteProtoToBinaryFile(proto, filename.c_str());
 }
 
-CAFFE_EXPORT bool ReadFileToDatum(const string& filename, const int label, Datum* datum);
+CAFFE_EXPORT bool ReadFileToDatum(const string& filename, const int label,
+    Datum* datum);
 
 inline bool ReadFileToDatum(const string& filename, Datum* datum) {
   return ReadFileToDatum(filename, -1, datum);
@@ -107,8 +110,8 @@ inline bool ReadImageToDatum(const string& filename, const int label,
                           "", datum);
 }
 
-CAFFE_EXPORT inline bool ReadImageToDatum(const string& filename, const int label,
-    const int height, const int width, Datum* datum) {
+CAFFE_EXPORT inline bool ReadImageToDatum(const string& filename,
+    const int label, const int height, const int width, Datum* datum) {
   return ReadImageToDatum(filename, label, height, width, true, datum);
 }
 

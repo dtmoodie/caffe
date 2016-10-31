@@ -26,7 +26,8 @@ CAFFE_EXPORT void hdf5_save_nd_dataset(
     bool write_diff = false);
 
 CAFFE_EXPORT int hdf5_load_int(hid_t loc_id, const string& dataset_name);
-CAFFE_EXPORT void hdf5_save_int(hid_t loc_id, const string& dataset_name, int i);
+CAFFE_EXPORT void hdf5_save_int(hid_t loc_id, 
+                                const string& dataset_name, int i);
 CAFFE_EXPORT string hdf5_load_string(hid_t loc_id, const string& dataset_name);
 CAFFE_EXPORT void hdf5_save_string(hid_t loc_id, const string& dataset_name,
                       const string& s);

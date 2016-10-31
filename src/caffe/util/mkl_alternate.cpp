@@ -8,8 +8,10 @@
     CHECK_GT(n, 0); CHECK(a); CHECK(y); \
     for (int i = 0; i < n; ++i) { operation; } \
   } \
-  template CAFFE_EXPORT void v##name<float>(const int n, const float* a, float* y); \
-  template CAFFE_EXPORT void v##name<double>(const int n, const double* a, double* y);
+  template CAFFE_EXPORT void v##name<float>(const int n, \
+    const float* a, float* y); \
+  template CAFFE_EXPORT void v##name<double>(const int n,  \
+    const double* a, double* y);
 
 DEFINE_VSL_UNARY_FUNC(Sqr, y[i] = a[i] * a[i]);
 DEFINE_VSL_UNARY_FUNC(Exp, y[i] = exp(a[i]));
@@ -24,8 +26,10 @@ DEFINE_VSL_UNARY_FUNC(Abs, y[i] = fabs(a[i]));
     CHECK_GT(n, 0); CHECK(a); CHECK(y); \
     for (int i = 0; i < n; ++i) { operation; } \
   } \
-  template CAFFE_EXPORT void v##name<float>(const int n, const float* a, const float b, float* y); \
-  template CAFFE_EXPORT void v##name<double>(const int n, const double* a, const double b, double* y); \
+  template CAFFE_EXPORT void v##name<float>(const int n, \
+    const float* a, const float b, float* y); \
+  template CAFFE_EXPORT void v##name<double>(const int n, \
+    const double* a, const double b, double* y); \
 
 DEFINE_VSL_UNARY_FUNC_WITH_PARAM(Powx, y[i] = pow(a[i], b));
 
@@ -37,8 +41,10 @@ DEFINE_VSL_UNARY_FUNC_WITH_PARAM(Powx, y[i] = pow(a[i], b));
     CHECK_GT(n, 0); CHECK(a); CHECK(b); CHECK(y); \
     for (int i = 0; i < n; ++i) { operation; } \
   } \
-  template CAFFE_EXPORT void v##name<float>(const int n, const float* a, const float* b, float* y); \
-  template CAFFE_EXPORT void v##name<double>(const int n, const double* a, const double* b, double* y);
+  template CAFFE_EXPORT void v##name<float>(const int n, \
+    const float* a, const float* b, float* y); \
+  template CAFFE_EXPORT void v##name<double>(const int n, \
+    const double* a, const double* b, double* y);
 
 DEFINE_VSL_BINARY_FUNC(Add, y[i] = a[i] + b[i]);
 DEFINE_VSL_BINARY_FUNC(Sub, y[i] = a[i] - b[i]);
