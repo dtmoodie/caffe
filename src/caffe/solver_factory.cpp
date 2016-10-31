@@ -1,17 +1,17 @@
-
 #include "caffe/solver_factory.hpp"
+#include <string>
+#include <vector>
 
+namespace caffe {
 
-namespace caffe{
-
-template<typename T> 
-typename SolverRegistry<T>::CreatorRegistry& SolverRegistry<T>::Registry(){
-    static SolverRegistry<T>::CreatorRegistry* g_registry_ 
+template<typename T>
+typename SolverRegistry<T>::CreatorRegistry& SolverRegistry<T>::Registry() {
+    static SolverRegistry<T>::CreatorRegistry* g_registry_
         = new SolverRegistry<T>::CreatorRegistry();
     return *g_registry_;
 }
 
-template<typename Dtype> 
+template<typename Dtype>
 void SolverRegistry<Dtype>::AddCreator(const string& type, Creator creator) {
     SolverRegistry<Dtype>::CreatorRegistry& registry = Registry();
     CHECK_EQ(registry.count(type), 0)
@@ -19,7 +19,7 @@ void SolverRegistry<Dtype>::AddCreator(const string& type, Creator creator) {
     registry[type] = creator;
 }
 
-template<typename Dtype> 
+template<typename Dtype>
 Solver<Dtype>* SolverRegistry<Dtype>::CreateSolver(
     const SolverParameter& param, Solver<Dtype>* root_solver) {
     const string& type = param.type();
@@ -29,11 +29,11 @@ Solver<Dtype>* SolverRegistry<Dtype>::CreateSolver(
     return registry[type](param, root_solver);
 }
 
-template<typename Dtype> 
+template<typename Dtype>
 vector<string> SolverRegistry<Dtype>::SolverTypeList() {
     SolverRegistry<Dtype>::CreatorRegistry& registry = Registry();
     vector<string> solver_types;
-    for (typename SolverRegistry<Dtype>::CreatorRegistry::iterator 
+    for (typename SolverRegistry<Dtype>::CreatorRegistry::iterator
         iter = registry.begin();
         iter != registry.end(); ++iter) {
         solver_types.push_back(iter->first);
@@ -41,7 +41,7 @@ vector<string> SolverRegistry<Dtype>::SolverTypeList() {
     return solver_types;
 }
 
-template<typename Dtype> 
+template<typename Dtype>
 string SolverRegistry<Dtype>::SolverTypeListString() {
     vector<string> solver_types = SolverRegistry<Dtype>::SolverTypeList();
     string solver_types_str;
@@ -56,4 +56,4 @@ string SolverRegistry<Dtype>::SolverTypeListString() {
 }
 
 INSTANTIATE_CLASS(SolverRegistry);
-}
+} // namespace caffe

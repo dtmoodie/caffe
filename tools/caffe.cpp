@@ -3,7 +3,9 @@
 namespace bp = boost::python;
 #endif
 #include <glog/logging.h>
-
+#ifndef _MSC_VER
+#include <gflags/gflags.h>
+#endif
 #include <cstring>
 #include <map>
 #include <string>
@@ -42,7 +44,8 @@ caffe::SolverAction::Enum GetRequestedAction(
     if (flag_value == "none") {
         return caffe::SolverAction::NONE;
     }
-    LOG(FATAL) << "Invalid signal effect \"" << flag_value << "\" was specified";
+    LOG(FATAL) << "Invalid signal effect \"" << flag_value
+        << "\" was specified";
     return caffe::SolverAction::NONE;
 }
 using caffe::Blob;
@@ -56,10 +59,6 @@ using caffe::Timer;
 using caffe::vector;
 using std::ostringstream;
 #ifndef _MSC_VER
-#include <gflags/gflags.h>
-
-
-
 
 DEFINE_string(gpu, "",
     "Optional; run in GPU mode on given device IDs separated by ','."
@@ -527,8 +526,7 @@ int main(int argc, char** argv)
         default_value("snapshot"), "Optional; action to take when a SIGHUP"
         " signal is received: "
             "snapshot, stop or none.");
-    if (argc < 2)
-    {
+    if (argc < 2) {
         std::cout << desc;
         return 0;
     }
@@ -538,10 +536,8 @@ int main(int argc, char** argv)
     boost::program_options::store(
         boost::program_options::parse_command_line(
             argc, argv, desc), vm);
-    if (brew_function == "train")
-    {
-        if (vm.count("solver"))
-        {
+    if (brew_function == "train") {
+        if (vm.count("solver")) {
             caffe::SolverParameter solver_param;
             caffe::ReadSolverParamsFromTextFileOrDie(
                 vm["solver"].as<std::string>(),
@@ -549,27 +545,22 @@ int main(int argc, char** argv)
             // If the gpus flag is not provided, allow the mode and device to be set
             // in the solver prototxt.
             if (solver_param.solver_mode() == 
-                caffe::SolverParameter_SolverMode_GPU)
-            {
+                caffe::SolverParameter_SolverMode_GPU) {
                 std::string gpu;
                 if (solver_param.has_device_id()) {
                     gpu = "" + boost::lexical_cast<std::string>(
                         solver_param.device_id());
-                }
-                else
-                {  // Set default GPU if unspecified
+                } else {
+                    // Set default GPU if unspecified
                     gpu = "0";
                 }
                 vector<int> gpus;
                 get_gpus(&gpus, vm["gpu"].as<std::string>());
 
-                if (gpus.size() == 0)
-                {
+                if (gpus.size() == 0) {
                     LOG(INFO) << "Use CPU.";
                     Caffe::set_mode(Caffe::CPU);
-                }
-                else
-                {
+                } else {
                     ostringstream s;
                     for (int i = 0; i < gpus.size(); ++i)
                     {
@@ -592,25 +583,19 @@ int main(int argc, char** argv)
 
                 solver->SetActionFunction(signal_handler.GetActionFunction());
 
-                if (vm.count("snapshot"))
-                {
+                if (vm.count("snapshot")) {
                     LOG(INFO) << "Resuming from " << 
                         vm["snapshot"].as<std::string>();
                     solver->Restore(vm["snapshot"].as<std::string>().c_str());
-                }
-                else if (vm.count("weight"))
-                {
+                } else if (vm.count("weight")) {
                     CopyLayers(solver.get(), vm["weights"].as<std::string>());
                 }
 
-                if (gpus.size() > 1)
-                {
+                if (gpus.size() > 1) {
                     caffe::P2PSync<float> sync(solver, 0, 
                         gpus.size(), solver->param());
                     sync.Run(gpus);
-                }
-                else
-                {
+                } else{
                     LOG(INFO) << "Starting Optimization";
                     solver->Solve();
                 }
@@ -619,20 +604,15 @@ int main(int argc, char** argv)
             }
         }
     }
-    if (brew_function == "test")
-    {
-        if (vm.count("model") && vm.count("weights") && vm.count("iterations"))
-        {
+    if (brew_function == "test") {
+        if (vm.count("model") && vm.count("weights") && vm.count("iterations")) {
             vector<int> gpus;
             get_gpus(&gpus, vm["gpu"].as<std::string>());
-            if (gpus.size() != 0)
-            {
+            if (gpus.size() != 0) {
                 LOG(INFO) << "Use GPU with device ID " << gpus[0];
                 Caffe::SetDevice(gpus[0]);
                 Caffe::set_mode(Caffe::GPU);
-            }
-            else
-            {
+            } else {
                 LOG(INFO) << "Use CPU.";
                 Caffe::set_mode(Caffe::CPU);
             }
@@ -646,24 +626,20 @@ int main(int argc, char** argv)
             vector<int> test_score_output_id;
             vector<float> test_score;
             float loss = 0;
-            for (int i = 0; i < iterations; ++i)
-            {
+            for (int i = 0; i < iterations; ++i) {
                 float iter_loss;
                 const vector<Blob<float>*>& result =
                     caffe_net.Forward(bottom_vec, &iter_loss);
                 loss += iter_loss;
                 int idx = 0;
-                for (int j = 0; j < result.size(); ++j)
-                {
+                for (int j = 0; j < result.size(); ++j) {
                     const float* result_vec = result[j]->cpu_data();
-                    for (int k = 0; k < result[j]->count(); ++k, ++idx)
-                    {
+                    for (int k = 0; k < result[j]->count(); ++k, ++idx) {
                         const float score = result_vec[k];
                         if (i == 0) {
                             test_score.push_back(score);
                             test_score_output_id.push_back(j);
-                        }
-                        else {
+                        } else {
                             test_score[idx] += score;
                         }
                         const std::string& output_name = 
@@ -675,25 +651,21 @@ int main(int argc, char** argv)
             }
             loss /= iterations;
             LOG(INFO) << "Loss: " << loss;
-            for (int i = 0; i < test_score.size(); ++i)
-            {
+            for (int i = 0; i < test_score.size(); ++i) {
                 const std::string& output_name = caffe_net.blob_names()[
                     caffe_net.output_blob_indices()[test_score_output_id[i]]];
                 const float loss_weight = caffe_net.blob_loss_weights()[
                     caffe_net.output_blob_indices()[test_score_output_id[i]]];
                 std::ostringstream loss_msg_stream;
                 const float mean_score = test_score[i] / iterations;
-                if (loss_weight)
-                {
+                if (loss_weight) {
                     loss_msg_stream << " (* " << loss_weight
                         << " = " << loss_weight * mean_score << " loss)";
                 }
                 LOG(INFO) << output_name << " = " << mean_score
                     << loss_msg_stream.str();
             }
-        }
-        else
-        {
+        } else {
             std::cout << "Must define model, weights, and "
                 "iterations for testing\n";
             std::cout << desc;

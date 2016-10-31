@@ -46,8 +46,7 @@
 
 namespace bp = boost::python;
 #ifdef _MSC_VER
-namespace boost
-{
+namespace boost {
     template <>
     caffe::Solver<float> const volatile * get_pointer
         <class caffe::Solver<float> const volatile >(

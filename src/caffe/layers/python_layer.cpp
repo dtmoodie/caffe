@@ -1,6 +1,7 @@
 #ifdef WITH_PYTHON_LAYER
 #include "caffe/layers/python_layer.hpp"
-namespace caffe{
+
+namespace caffe {
 template<typename Dtype>
 PythonLayer<Dtype>::PythonLayer(PyObject* self, const LayerParameter& param)
     : Layer<Dtype>(param), self_(bp::handle<>(bp::borrowed(self))) { }
@@ -34,7 +35,7 @@ bool PythonLayer<Dtype>::ShareInParallel() const {
 template<typename Dtype>
 const char* PythonLayer<Dtype>::type() const { return "Python"; }
 
- 
+
 template<typename Dtype>
 void PythonLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {

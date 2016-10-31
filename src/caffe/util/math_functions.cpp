@@ -1,8 +1,8 @@
 #include <boost/math/special_functions/next.hpp>
 #include <boost/random.hpp>
 
-#include <limits>
 #include <algorithm>
+#include <limits>
 
 #include "caffe/common.hpp"
 #include "caffe/util/math_functions.hpp"
@@ -163,8 +163,7 @@ void caffe_copy(const int N, const Dtype* X, Dtype* Y) {
 #else
             NO_GPU;
 #endif
-        }
-        else {
+        } else {
             memcpy(Y, X, sizeof(Dtype) * N);  // NOLINT(caffe/alt_fn)
         }
     }
@@ -407,7 +406,7 @@ void caffe_rng_bernoulli(const int n, const Dtype p, int* r) {
     CHECK_GE(p, 0);
     CHECK_LE(p, 1);
     boost::bernoulli_distribution<Dtype> random_distribution(p);
-    boost::variate_generator<caffe::rng_t*, 
+    boost::variate_generator<caffe::rng_t*,
         boost::bernoulli_distribution<Dtype> >
         variate_generator(caffe_rng(), random_distribution);
     for (int i = 0; i < n; ++i) {
@@ -428,7 +427,7 @@ void caffe_rng_bernoulli(const int n, const Dtype p, unsigned int* r) {
     CHECK_GE(p, 0);
     CHECK_LE(p, 1);
     boost::bernoulli_distribution<Dtype> random_distribution(p);
-    boost::variate_generator<caffe::rng_t*, 
+    boost::variate_generator<caffe::rng_t*,
         boost::bernoulli_distribution<Dtype> >
         variate_generator(caffe_rng(), random_distribution);
     for (int i = 0; i < n; ++i) {
@@ -513,7 +512,7 @@ template void caffe_cpu_eltwise_max<double>(const int N,
     const double alpha, const double* x, const double beta, double* y);
 
 // y[i]= min(a*x[i], b*y[i])
-template <typename Dtype> 
+template <typename Dtype>
 void caffe_cpu_eltwise_min(const int N, const Dtype alpha, const Dtype* x,
     const Dtype beta, Dtype* y) {
     for (int i = 0; i < N; ++i) {

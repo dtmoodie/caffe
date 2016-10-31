@@ -21,9 +21,9 @@ class CAFFE_EXPORT PythonLayer : public Layer<Dtype> {
   virtual void Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
 
-  virtual inline bool ShareInParallel() const;
+  virtual bool ShareInParallel() const;
 
-  virtual inline const char* type() const;
+  virtual const char* type() const;
 
  protected:
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,

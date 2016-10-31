@@ -37,9 +37,9 @@
 #pragma GCC diagnostic ignored "-Wreturn-type"
 #endif
 namespace caffe {
-    template<typename T> typename LayerRegistry<T>::CreatorRegistry& 
+    template<typename T> typename LayerRegistry<T>::CreatorRegistry&
         LayerRegistry<T>::Registry() {
-        static LayerRegistry<T>::CreatorRegistry* g_registry_ 
+        static LayerRegistry<T>::CreatorRegistry* g_registry_
             = new LayerRegistry<T>::CreatorRegistry();
         return *g_registry_;
     }
@@ -53,7 +53,7 @@ namespace caffe {
     }
 
     template<typename T> shared_ptr<Layer<T> > LayerRegistry<T>::CreateLayer(
-        const LayerParameter& param){
+        const LayerParameter& param) {
         if (Caffe::root_solver()) {
             LOG(INFO) << "Creating layer " << param.name();
         }
@@ -88,7 +88,7 @@ namespace caffe {
     }
 
 INSTANTIATE_CLASS(LayerRegistry);
-    
+
 // Get convolution layer according to engine.
 template <typename Dtype>
 shared_ptr<Layer<Dtype> > GetConvolutionLayer(
