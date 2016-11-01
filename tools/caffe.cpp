@@ -542,7 +542,7 @@ int main(int argc, char** argv) {
             caffe::ReadSolverParamsFromTextFileOrDie(
                 vm["solver"].as<std::string>(),
                 &solver_param);
-            // If the gpus flag is not provided, allow the mode 
+            // If the gpus flag is not provided, allow the mode
             // and device to be set
             // in the solver prototxt.
             if (solver_param.solver_mode() ==
