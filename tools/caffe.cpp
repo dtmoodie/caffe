@@ -2,10 +2,11 @@
 #include "boost/python.hpp"
 namespace bp = boost::python;
 #endif
-#include <glog/logging.h>
 #ifndef _MSC_VER
 #include <gflags/gflags.h>
 #endif
+#include <glog/logging.h>
+
 #include <cstring>
 #include <map>
 #include <string>
@@ -499,8 +500,7 @@ static void get_gpus(vector<int>* gpus, std::string FLAGS_gpu) {
     }
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     // Print output to stderr (while still logging).
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
@@ -515,8 +515,8 @@ int main(int argc, char** argv)
         "separated by ','. Cannot be set simultaneously with snapshot.")
     ("gpu", boost::program_options::value<std::string>()->default_value("all"),
             "Optional; run in GPU mode on given device IDs separated by ','."
-            "Use '-gpu all' to run on all available GPUs. The effective training "
-            "batch size is multiplied by the number of devices.")
+        "Use '-gpu all' to run on all available GPUs. The effective training "
+        "batch size is multiplied by the number of devices.")
     ("iterations", boost::program_options::value<int>()->default_value(50),
         "The number of iterations to run.")
     ("sigint_effect", boost::program_options::value<std::string>()->
@@ -530,7 +530,7 @@ int main(int argc, char** argv)
         std::cout << desc;
         return 0;
     }
-    //caffe::GlobalInit(&argc, &argv);
+    // caffe::GlobalInit(&argc, &argv);
     auto brew_function = boost::lexical_cast<std::string>(argv[1]);
     boost::program_options::variables_map vm;
     boost::program_options::store(
@@ -542,9 +542,10 @@ int main(int argc, char** argv)
             caffe::ReadSolverParamsFromTextFileOrDie(
                 vm["solver"].as<std::string>(),
                 &solver_param);
-            // If the gpus flag is not provided, allow the mode and device to be set
+            // If the gpus flag is not provided, allow the mode 
+            // and device to be set
             // in the solver prototxt.
-            if (solver_param.solver_mode() == 
+            if (solver_param.solver_mode() ==
                 caffe::SolverParameter_SolverMode_GPU) {
                 std::string gpu;
                 if (solver_param.has_device_id()) {
@@ -562,8 +563,7 @@ int main(int argc, char** argv)
                     Caffe::set_mode(Caffe::CPU);
                 } else {
                     ostringstream s;
-                    for (int i = 0; i < gpus.size(); ++i)
-                    {
+                    for (int i = 0; i < gpus.size(); ++i) {
                         s << (i ? ", " : "") << gpus[i];
                     }
                     LOG(INFO) << "Using GPUs " << s.str();
@@ -584,7 +584,7 @@ int main(int argc, char** argv)
                 solver->SetActionFunction(signal_handler.GetActionFunction());
 
                 if (vm.count("snapshot")) {
-                    LOG(INFO) << "Resuming from " << 
+                    LOG(INFO) << "Resuming from " <<
                         vm["snapshot"].as<std::string>();
                     solver->Restore(vm["snapshot"].as<std::string>().c_str());
                 } else if (vm.count("weight")) {
@@ -592,10 +592,10 @@ int main(int argc, char** argv)
                 }
 
                 if (gpus.size() > 1) {
-                    caffe::P2PSync<float> sync(solver, 0, 
+                    caffe::P2PSync<float> sync(solver, 0,
                         gpus.size(), solver->param());
                     sync.Run(gpus);
-                } else{
+                } else {
                     LOG(INFO) << "Starting Optimization";
                     solver->Solve();
                 }
@@ -605,7 +605,8 @@ int main(int argc, char** argv)
         }
     }
     if (brew_function == "test") {
-        if (vm.count("model") && vm.count("weights") && vm.count("iterations")) {
+        if (vm.count("model") && vm.count("weights")
+            && vm.count("iterations")) {
             vector<int> gpus;
             get_gpus(&gpus, vm["gpu"].as<std::string>());
             if (gpus.size() != 0) {
@@ -642,8 +643,9 @@ int main(int argc, char** argv)
                         } else {
                             test_score[idx] += score;
                         }
-                        const std::string& output_name = 
-                            caffe_net.blob_names()[caffe_net.output_blob_indices()[j]];
+                        const std::string& output_name =
+                            caffe_net.blob_names()
+                            [caffe_net.output_blob_indices()[j]];
                         LOG(INFO) << "Batch " << i << ", "
                             << output_name << " = " << score;
                     }

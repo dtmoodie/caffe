@@ -1,5 +1,6 @@
 #ifdef WITH_PYTHON_LAYER
 #include "caffe/layers/python_layer.hpp"
+#include <vector>
 
 namespace caffe {
 template<typename Dtype>
@@ -49,5 +50,5 @@ void  PythonLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
 }
 INSTANTIATE_CLASS(PythonLayer);
 
-} // namespace caffe
-#endif // WITH_PYTHON_LAYER
+}  // namespace caffe
+#endif  // WITH_PYTHON_LAYER

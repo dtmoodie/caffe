@@ -56,4 +56,4 @@ string SolverRegistry<Dtype>::SolverTypeListString() {
 }
 
 INSTANTIATE_CLASS(SolverRegistry);
-} // namespace caffe
+}  // namespace caffe

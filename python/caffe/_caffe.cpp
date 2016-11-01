@@ -50,58 +50,58 @@ namespace boost {
     template <>
     caffe::Solver<float> const volatile * get_pointer
         <class caffe::Solver<float> const volatile >(
-        class caffe::Solver<float> const volatile *c){
+        class caffe::Solver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::AdaDeltaSolver<float> const volatile * get_pointer
         <class caffe::AdaDeltaSolver<float> const volatile >(
-            class caffe::AdaDeltaSolver<float> const volatile *c){
+            class caffe::AdaDeltaSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::AdaGradSolver<float> const volatile * get_pointer
         <class caffe::AdaGradSolver<float> const volatile >(
-            class caffe::AdaGradSolver<float> const volatile *c){
+            class caffe::AdaGradSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::AdamSolver<float> const volatile * get_pointer
         <class caffe::AdamSolver<float> const volatile >(
-            class caffe::AdamSolver<float> const volatile *c){
+            class caffe::AdamSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::NesterovSolver<float> const volatile * get_pointer
         <class caffe::NesterovSolver<float> const volatile >(
-            class caffe::NesterovSolver<float> const volatile *c){
+            class caffe::NesterovSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::Net<float> const volatile * get_pointer
         <class caffe::Net<float> const volatile >(
-            class caffe::Net<float> const volatile *c){
+            class caffe::Net<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::RMSPropSolver<float> const volatile * get_pointer
         <class caffe::RMSPropSolver<float> const volatile >(
-            class caffe::RMSPropSolver<float> const volatile *c){
+            class caffe::RMSPropSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::SGDSolver<float> const volatile * get_pointer
         <class caffe::SGDSolver<float> const volatile >(
-            class caffe::SGDSolver<float> const volatile *c){
+            class caffe::SGDSolver<float> const volatile *c) {
         return c;
     }
     template <>
     caffe::Layer<float> const volatile * get_pointer
         <class caffe::Layer<float> const volatile >(
-            class caffe::Layer<float> const volatile *c){
+            class caffe::Layer<float> const volatile *c) {
         return c;
     }
-} // namespace boost
+}  // namespace boost
 
 #endif
 namespace caffe {
