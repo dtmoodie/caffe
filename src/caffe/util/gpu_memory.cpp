@@ -19,7 +19,7 @@ const size_t GPUMemory::Manager::MAX_CACHED_BYTES = (size_t) -1;
 
 GPUMemory::Manager& GPUMemory::mgr() {
     static Manager* mgr = NULL;
-    if (mgr == nullptr)
+    if (mgr == NULL)
         mgr = new Manager;
     return *mgr;
 }
