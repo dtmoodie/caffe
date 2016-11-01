@@ -157,7 +157,7 @@ class CuDNNBatchNormLayerTest : public GPUDeviceTest<TypeParam> {
     FillerParameter filler_param;
     filler_param.set_mean(-10);
     filler_param.set_std(5);
-    GaussianFiller<Dtype> filler(filler_param);
+    GaussianFiller<TypeParam> filler(filler_param);
     filler.Fill(this->blob_bottom_);
     blob_bottom_vec_.push_back(blob_bottom_);
     blob_top_vec_.push_back(blob_top_);
