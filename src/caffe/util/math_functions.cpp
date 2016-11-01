@@ -308,7 +308,7 @@ void caffe_abs<float>(const int n, const float* a, float* y) {
     vAbs(n, a, y);
 }
 
-template CAFFE_EXPORT 
+template CAFFE_EXPORT
 void caffe_abs<float>(const int n, const float* a, float* y);
 
 template <>
