@@ -272,7 +272,7 @@ class CuDNNLRNLayerTest : public GPUDeviceTest<TypeParam> {
   void ReferenceLRNForward(const Blob<TypeParam>& blob_bottom,
       const LayerParameter& layer_param, Blob<TypeParam>* blob_top);
 
-  Dtype epsilon_;
+  TypeParam epsilon_;
   Blob<TypeParam>* const blob_bottom_;
   Blob<TypeParam>* const blob_top_;
   vector<Blob<TypeParam>*> blob_bottom_vec_;
