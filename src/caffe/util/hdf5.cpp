@@ -83,6 +83,9 @@ void hdf5_load_nd_dataset<float>(hid_t file_id, const char* dataset_name_,
     file_id, dataset_name_, blob->mutable_cpu_data());
   CHECK_GE(status, 0) << "Failed to read float dataset " << dataset_name_;
 }
+template CAFFE_EXPORT void hdf5_load_nd_dataset<float>(
+    hid_t file_id, const char* dataset_name_,
+    int min_dim, int max_dim, Blob<float>* blob);
 
 template <>
 void hdf5_load_nd_dataset<double>(hid_t file_id, const char* dataset_name_,
@@ -92,6 +95,10 @@ void hdf5_load_nd_dataset<double>(hid_t file_id, const char* dataset_name_,
     file_id, dataset_name_, blob->mutable_cpu_data());
   CHECK_GE(status, 0) << "Failed to read double dataset " << dataset_name_;
 }
+
+template CAFFE_EXPORT void hdf5_load_nd_dataset<double>(
+    hid_t file_id, const char* dataset_name_,
+    int min_dim, int max_dim, Blob<double>* blob);
 
 template <>
 void hdf5_save_nd_dataset<float>(
@@ -113,6 +120,10 @@ void hdf5_save_nd_dataset<float>(
   CHECK_GE(status, 0) << "Failed to make float dataset " << dataset_name;
   delete[] dims;
 }
+template CAFFE_EXPORT
+void hdf5_save_nd_dataset<float>(
+    const hid_t file_id, const string& dataset_name, const Blob<float>& blob,
+    bool write_diff);
 
 template <>
 void hdf5_save_nd_dataset<double>(
@@ -134,6 +145,11 @@ void hdf5_save_nd_dataset<double>(
   CHECK_GE(status, 0) << "Failed to make double dataset " << dataset_name;
   delete[] dims;
 }
+
+template CAFFE_EXPORT
+void hdf5_save_nd_dataset<double>(
+    hid_t file_id, const string& dataset_name, const Blob<double>& blob,
+    bool write_diff);
 
 string hdf5_load_string(hid_t loc_id, const string& dataset_name) {
   // Get size of dataset

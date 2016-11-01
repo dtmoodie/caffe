@@ -1,6 +1,3 @@
-// msvc doesn't see libcaffe_EXPORTS when this file is compiled via nvcc
-// This file should only ever be compiled when building the caffe shared library
-#define libcaffe_EXPORTS
 #include <math_functions.h>  // CUDA's, not caffe's, for fabs, signbit
 #include <thrust/device_vector.h>
 #include <thrust/functional.h>  // thrust::plus
@@ -30,6 +27,12 @@ void caffe_gpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
       N, M, K, &alpha, B, ldb, A, lda, &beta, C, N));
 }
 
+template CAFFE_EXPORT
+void caffe_gpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const float alpha, const float* A, const float* B, const float beta,
+    float* C);
+
 template <>
 void caffe_gpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
     const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
@@ -46,6 +49,12 @@ void caffe_gpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
       N, M, K, &alpha, B, ldb, A, lda, &beta, C, N));
 }
 
+template CAFFE_EXPORT
+void caffe_gpu_gemm<double>(const CBLAS_TRANSPOSE TransA,
+    const CBLAS_TRANSPOSE TransB, const int M, const int N, const int K,
+    const double alpha, const double* A, const double* B, const double beta,
+    double* C);
+
 template <>
 void caffe_gpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
     const int N, const float alpha, const float* A, const float* x,
@@ -56,6 +65,11 @@ void caffe_gpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
       A, N, x, 1, &beta, y, 1));
 }
 
+template CAFFE_EXPORT
+void caffe_gpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const float alpha, const float* A, const float* x,
+    const float beta, float* y);
+
 template <>
 void caffe_gpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
     const int N, const double alpha, const double* A, const double* x,
@@ -65,6 +79,11 @@ void caffe_gpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
   CUBLAS_CHECK(cublasDgemv(Caffe::cublas_handle(), cuTransA, N, M, &alpha,
       A, N, x, 1, &beta, y, 1));
 }
+
+template CAFFE_EXPORT
+void caffe_gpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
+    const int N, const double alpha, const double* A, const double* x,
+    const double beta, double* y);
 
 template <>
 void caffe_gpu_axpy<float>(const int N, const float alpha, const float* X,

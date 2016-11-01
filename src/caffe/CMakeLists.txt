@@ -35,11 +35,13 @@ endif(MSVC)
 IF(MSVC)
   SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /FIcaffe/proto/caffe.pb.h /Dproto_EXPORTS")
   if(MSVC_VERSION GREATER 1800)
-      list(APPEND Caffe_LINKER_LIBS ntdll)
+    list(APPEND Caffe_LINKER_LIBS ntdll)
   endif()
 else(MSVC)
   SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -include caffe/common.hpp")
 endif(MSVC)
+
+
 
 add_library(${caffe_lib_name} ${srcs})
 target_link_libraries(${caffe_lib_name} proto ${Caffe_LINKER_LIBS})

@@ -148,6 +148,10 @@ macro(caffe_cuda_compile objlist_variable)
 
   if(UNIX OR APPLE)
     list(APPEND CUDA_NVCC_FLAGS -Xcompiler -fPIC)
+  else()
+    if(BUILD_SHARED_LIBS)
+      list(APPEND CUDA_NVCC_FLAGS -Dlibcaffe_EXPORTS)
+    endif()
   endif()
 
   if(APPLE)

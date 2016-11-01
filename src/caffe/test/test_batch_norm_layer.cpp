@@ -147,12 +147,12 @@ namespace caffe {
   }
 
 #ifdef USE_CUDNN
-template <typename Dtype>
-class CuDNNBatchNormLayerTest : public GPUDeviceTest<Dtype> {
+template <typename TypeParam>
+class CuDNNBatchNormLayerTest : public GPUDeviceTest<TypeParam> {
  protected:
   CuDNNBatchNormLayerTest()
-      : blob_bottom_(new Blob<Dtype>(2, 3, 4, 5)),
-        blob_top_(new Blob<Dtype>()) {
+      : blob_bottom_(new Blob<TypeParam>(2, 3, 4, 5)),
+        blob_top_(new Blob<TypeParam>()) {
     // fill the values
     FillerParameter filler_param;
     filler_param.set_mean(-10);
@@ -163,12 +163,12 @@ class CuDNNBatchNormLayerTest : public GPUDeviceTest<Dtype> {
     blob_top_vec_.push_back(blob_top_);
   }
   virtual ~CuDNNBatchNormLayerTest() { delete blob_bottom_; delete blob_top_; }
-  void checkMeanVar(const Blob<Dtype> *blob_bottom, int num,
+  void checkMeanVar(const Blob<TypeParam> *blob_bottom, int num,
     int channels, int height, int width);
-  Blob<Dtype>* const blob_bottom_;
-  Blob<Dtype>* const blob_top_;
-  vector<Blob<Dtype>*> blob_bottom_vec_;
-  vector<Blob<Dtype>*> blob_top_vec_;
+  Blob<TypeParam>* const blob_bottom_;
+  Blob<TypeParam>* const blob_top_;
+  vector<Blob<TypeParam>*> blob_bottom_vec_;
+  vector<Blob<TypeParam>*> blob_top_vec_;
 };
 
 template <typename TypeParam>

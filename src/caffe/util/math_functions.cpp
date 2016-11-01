@@ -282,11 +282,16 @@ template <>
 void caffe_exp<float>(const int n, const float* a, float* y) {
     vExp(n, a, y);
 }
+template CAFFE_EXPORT
+void caffe_exp<float>(const int n, const float* a, float* y);
 
 template <>
 void caffe_exp<double>(const int n, const double* a, double* y) {
     vExp(n, a, y);
 }
+
+template CAFFE_EXPORT
+void caffe_exp<double>(const int n, const double* a, double* y);
 
 template <>
 void caffe_log<float>(const int n, const float* a, float* y) {
@@ -303,10 +308,15 @@ void caffe_abs<float>(const int n, const float* a, float* y) {
     vAbs(n, a, y);
 }
 
+template CAFFE_EXPORT 
+void caffe_abs<float>(const int n, const float* a, float* y);
+
 template <>
 void caffe_abs<double>(const int n, const double* a, double* y) {
     vAbs(n, a, y);
 }
+template CAFFE_EXPORT
+void caffe_abs<double>(const int n, const double* a, double* y);
 
 unsigned int caffe_rng_rand() {
     return (*caffe_rng())();
