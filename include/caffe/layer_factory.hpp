@@ -1,6 +1,6 @@
 /**
  * @brief A layer factory that allows one to register layers.
- * During runtime, registered layers could be called by passing a LayerParameter
+ * During runtime, registered layers can be called by passing a LayerParameter
  * protobuffer to the CreateLayer function:
  *
  *     LayerRegistry<Dtype>::CreateLayer(param);
@@ -45,7 +45,7 @@
 
 #include "caffe/common.hpp"
 #include "caffe/layer.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 
 namespace caffe {
 

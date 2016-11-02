@@ -73,8 +73,9 @@ add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
 if(MSVC)
   add_definitions( -D_VARIADIC_MAX=10 )
   add_definitions( -DGTEST_HAS_TR1_TUPLE=0 )
-  add_definitions( -D_CRT_SECURE_NO_WARNINGS)
-  add_definitions( -DBOOST_ALL_DYN_LINK)
+  add_definitions( -D_CRT_SECURE_NO_WARNINGS )
+  add_definitions( -DBOOST_ALL_DYN_LINK )
+  add_definitions( -DGLOG_NO_ABBREVIATED_SEVERITIES )
 ENDIF(MSVC)
 
 # ---[ Warnings

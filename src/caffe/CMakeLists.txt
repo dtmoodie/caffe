@@ -5,7 +5,7 @@ caffe_protobuf_generate_cpp_py(${proto_gen_folder} proto_srcs proto_hdrs proto_p
 # include python files either to force generation
 add_library(proto STATIC ${proto_hdrs} ${proto_srcs} ${proto_python})
 IF(MSVC)
-  SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /FIcaffe/proto/caffe.pb.h /Dproto_EXPORTS")
+  SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /FIcaffe/proto/caffe_pb.h /Dproto_EXPORTS")
   if(MSVC_VERSION GREATER 1800)
       list(APPEND Caffe_LINKER_LIBS ntdll)
   endif()
@@ -33,7 +33,7 @@ endif(MSVC)
 
 
 IF(MSVC)
-  SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /FIcaffe/proto/caffe.pb.h /Dproto_EXPORTS")
+  SET_TARGET_PROPERTIES(proto PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} /FIcaffe/proto/caffe_pb.h /Dproto_EXPORTS")
   if(MSVC_VERSION GREATER 1800)
     list(APPEND Caffe_LINKER_LIBS ntdll)
   endif()

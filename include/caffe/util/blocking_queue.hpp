@@ -7,7 +7,7 @@
 namespace caffe {
 
 template<typename T>
-class BlockingQueue {
+class CAFFE_EXPORT BlockingQueue {
  public:
   explicit BlockingQueue();
 

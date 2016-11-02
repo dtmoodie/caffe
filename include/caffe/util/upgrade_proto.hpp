@@ -4,7 +4,7 @@
 #include <string>
 
 #include "caffe/export.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 
 namespace caffe {
 
@@ -70,6 +70,12 @@ CAFFE_EXPORT bool NetNeedsInputUpgrade(const NetParameter& net_param);
 
 // Perform all necessary transformations to upgrade input fields into layers.
 CAFFE_EXPORT void UpgradeNetInput(NetParameter* net_param);
+
+// Return true iff the Net contains batch norm layers with manual local LRs.
+bool NetNeedsBatchNormUpgrade(const NetParameter& net_param);
+
+// Perform all necessary transformations to upgrade batch norm layers.
+void UpgradeNetBatchNorm(NetParameter* net_param);
 
 // Return true iff the solver contains any old solver_type specified as enums
 CAFFE_EXPORT bool SolverNeedsTypeUpgrade(const SolverParameter& solver_param);

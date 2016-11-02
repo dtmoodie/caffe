@@ -9,7 +9,7 @@
 #include "caffe/internal_thread.hpp"
 #include "caffe/layer.hpp"
 #include "caffe/layers/base_data_layer.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 #include "caffe/util/db.hpp"
 #include "caffe/util/thread_pool.hpp"
 
@@ -32,7 +32,7 @@ class CAFFE_EXPORT DataLayer : public BasePrefetchingDataLayer<Dtype> {
  protected:
   virtual void load_batch(Batch<Dtype>* batch);
 
-  DataReader reader_;
+  DataReader<Datum> reader_;
   shared_ptr<ThreadPool> pool_;
 };
 

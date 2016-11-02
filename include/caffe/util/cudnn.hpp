@@ -5,7 +5,7 @@
 #include <cudnn.h>
 
 #include "caffe/common.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 
 #define CUDNN_VERSION_MIN(major, minor, patch) \
     (CUDNN_VERSION >= (major * 1000 + minor * 100 + patch))
@@ -99,10 +99,10 @@ inline void createFilterDesc(cudnnFilterDescriptor_t* desc,
   CUDNN_CHECK(cudnnCreateFilterDescriptor(desc));
 #if CUDNN_VERSION_MIN(5, 0, 0)
   CUDNN_CHECK(cudnnSetFilter4dDescriptor(*desc, dataType<Dtype>::type,
-                                         CUDNN_TENSOR_NCHW, n, c, h, w));
+    CUDNN_TENSOR_NCHW, n, c, h, w));
 #else
   CUDNN_CHECK(cudnnSetFilter4dDescriptor_v4(*desc, dataType<Dtype>::type,
-                                            CUDNN_TENSOR_NCHW, n, c, h, w));
+    CUDNN_TENSOR_NCHW, n, c, h, w));
 #endif
 }
 
@@ -149,6 +149,14 @@ inline void createPoolingDesc(cudnnPoolingDescriptor_t* pool_desc,
   CUDNN_CHECK(cudnnSetPoolingNdDescriptor_v4(*pool_desc, *mode,
       CUDNN_PROPAGATE_NAN, 2, dimA, padA, strideA));
 #endif
+}
+
+template <typename Dtype>
+inline void createActivationDescriptor(cudnnActivationDescriptor_t* activ_desc,
+    cudnnActivationMode_t mode) {
+  CUDNN_CHECK(cudnnCreateActivationDescriptor(activ_desc));
+  CUDNN_CHECK(cudnnSetActivationDescriptor(*activ_desc, mode,
+                                           CUDNN_PROPAGATE_NAN, Dtype(0)));
 }
 
 }  // namespace cudnn

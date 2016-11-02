@@ -7,7 +7,7 @@
 #include "caffe/blob.hpp"
 #include "caffe/common.hpp"
 #include "caffe/net.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 #include "caffe/util/db.hpp"
 #include "caffe/util/format.hpp"
 #include "caffe/util/io.hpp"
@@ -130,7 +130,7 @@ int feature_extraction_pipeline(int argc, char** argv) {
     txns.push_back(txn);
   }
 
-  LOG(ERROR)<< "Extacting Features";
+  LOG(ERROR)<< "Extracting Features";
 
   Datum datum;
   std::vector<int> image_indices(num_features, 0);

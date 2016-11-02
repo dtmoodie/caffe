@@ -59,10 +59,10 @@ void DataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   const int batch_size = this->layer_param_.data_param().batch_size();
   // Read a data point, and use it to initialize the top blob.
-  string& str = *(reader_.full().peek());
+  Datum& datum = *(reader_.full().peek());
   // Parse this data point so we can use the datum to infer things
-  Datum datum;
-  datum.ParseFromString(str);
+  //Datum datum;
+  //datum.ParseFromString(str);
 
   // Use data_transformer to infer the expected blob shape from datum.
   vector<int> top_shape = this->data_transformer_->InferBlobShape(datum);
@@ -99,9 +99,9 @@ void DataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   // Reshape according to the first datum of each batch
   // on single input batches allows for inputs of varying dimension.
   const int batch_size = this->layer_param_.data_param().batch_size();
-  string& str = *(reader_.full().peek());
-  Datum datum;
-  datum.ParseFromString(str);
+  Datum& datum = *(reader_.full().peek());
+  //Datum datum;
+  //datum.ParseFromString(str);
   // Use data_transformer to infer the expected blob shape from datum.
   vector<int> top_shape = this->data_transformer_->InferBlobShape(datum);
   this->transformed_data_.Reshape(top_shape);
@@ -118,7 +118,7 @@ void DataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   for (int item_id = 0; item_id < batch_size; ++item_id) {
       timer.Start();
       // Get a datum
-      string* str = (reader_.full().pop("Waiting for data"));
+      Datum* datum = (reader_.full().pop("Waiting for data"));
       read_time += timer.MicroSeconds();
       // Copy label.
       Dtype* label_ptr = NULL;
@@ -142,8 +142,8 @@ void DataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
          rand3 = this->data_transformer_->Rand(RAND_MAX)+1;
       }
 
-      pool_->runTask(boost::bind(&DataTransformer<Dtype>::TransformPtrEntry,
-                                this->data_transformer_.get(), str, ptr,
+      pool_->runTask(boost::bind(&DataTransformer<Dtype>::TransformDatumEntry,
+                                this->data_transformer_.get(), datum, ptr,
                                 rand1, rand2, rand3,
                                 this->output_labels_, label_ptr,
                                 &(reader_.free())));

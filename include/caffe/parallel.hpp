@@ -9,7 +9,7 @@
 #include "caffe/common.hpp"
 #include "caffe/internal_thread.hpp"
 #include "caffe/layer.hpp"
-#include "caffe/proto/caffe.pb.h"
+#include "caffe/proto/caffe_pb.h"
 #include "caffe/solver.hpp"
 #include "caffe/syncedmem.hpp"
 #include "caffe/util/blocking_queue.hpp"
@@ -107,7 +107,7 @@ class CAFFE_EXPORT P2PSync : public GPUParams<Dtype>,
   void Run(const vector<int>& gpus);
   void Prepare(const vector<int>& gpus,
                vector<shared_ptr<P2PSync<Dtype> > >* syncs);
-  inline const int initial_iter() const { return initial_iter_; }
+  inline int initial_iter() const { return initial_iter_; }
 
   // Divide the batch size by the number of solvers
   static void divide_batch_size(NetParameter* net);

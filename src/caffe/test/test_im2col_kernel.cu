@@ -11,7 +11,7 @@
 #include "caffe/test/test_caffe_main.hpp"
 
 namespace caffe {
-
+#ifndef _MSC_VER
 // Forward declare kernel functions
 template <typename Dtype>
 __global__ void im2col_gpu_kernel(const int n, const Dtype* data_im,
@@ -209,5 +209,5 @@ TYPED_TEST(Im2colKernelTest, TestND) {
     }
   }
 }
-
+#endif
 }  // namespace caffe
