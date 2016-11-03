@@ -91,8 +91,9 @@ void convert_dataset(const string& input_folder, const string& output_folder,
 }
 
 int main(int argc, char** argv) {
+#ifdef USE_GLOG
   FLAGS_alsologtostderr = 1;
-
+#endif
   if (argc != 4) {
     printf("This script converts the CIFAR dataset to the leveldb format used\n"
            "by caffe to perform classification.\n"
@@ -103,7 +104,9 @@ int main(int argc, char** argv) {
            "    http://www.cs.toronto.edu/~kriz/cifar.html\n"
            "You should gunzip them after downloading.\n");
   } else {
+#ifdef USE_GLOG
     google::InitGoogleLogging(argv[0]);
+#endif
     convert_dataset(string(argv[1]), string(argv[2]), string(argv[3]));
   }
   return 0;

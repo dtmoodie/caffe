@@ -233,9 +233,9 @@ int main(int argc, char** argv) {
               << " mean.binaryproto labels.txt img.jpg" << std::endl;
     return 1;
   }
-
+#ifdef USE_GLOG
   ::google::InitGoogleLogging(argv[0]);
-
+#endif
   string model_file   = argv[1];
   string trained_file = argv[2];
   string mean_file    = argv[3];

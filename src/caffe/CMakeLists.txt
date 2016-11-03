@@ -60,8 +60,8 @@ install(DIRECTORY ${Caffe_INCLUDE_DIR}/caffe DESTINATION include)
 install(FILES ${proto_hdrs} DESTINATION include/caffe/proto)
 
 IF(MSVC)
-  install( FILES ${PROJECT_BINARY_DIR}/Bin/Debug/${caffe_lib_name}-d.pdb DESTINATION bin CONFIGURATIONS Debug)
-  install( FILES ${PROJECT_BINARY_DIR}/Bin/Release/${caffe_lib_name}.pdb DESTINATION bin CONFIGURATIONS Release)
+  install( FILES ${PROJECT_BINARY_DIR}/Bin/Debug/${caffe_lib_name}-nv-d.pdb DESTINATION bin CONFIGURATIONS Debug)
+  install( FILES ${PROJECT_BINARY_DIR}/Bin/Release/${caffe_lib_name}-nv.pdb DESTINATION bin CONFIGURATIONS Release)
   install(TARGETS ${caffe_lib_name} proto 
     EXPORT CaffeTargets DESTINATION lib
 	RUNTIME DESTINATION bin)

@@ -114,9 +114,9 @@ int main(int argc, char** argv) {
 #ifndef GFLAGS_GFLAGS_H_
   namespace gflags = google;
 #endif
-
+#ifdef USE_GLOG
   FLAGS_alsologtostderr = 1;
-
+#endif
   gflags::SetUsageMessage("This script converts the MNIST dataset to\n"
         "the lmdb/leveldb format used by Caffe to load data.\n"
         "Usage:\n"
@@ -134,7 +134,9 @@ int main(int argc, char** argv) {
     gflags::ShowUsageWithFlagsRestrict(argv[0],
         "examples/mnist/convert_mnist_data");
   } else {
+#ifdef USE_GLOG
     google::InitGoogleLogging(argv[0]);
+#endif
     convert_dataset(argv[1], argv[2], argv[3], db_backend);
   }
   return 0;

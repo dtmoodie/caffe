@@ -45,10 +45,11 @@ DEFINE_string(encode_type, "",
 
 int main(int argc, char** argv) {
 #ifdef USE_OPENCV
+#ifdef USE_GLOG
   ::google::InitGoogleLogging(argv[0]);
   // Print output to stderr (while still logging)
   FLAGS_alsologtostderr = 1;
-
+#endif
 #ifndef GFLAGS_GFLAGS_H_
   namespace gflags = google;
 #endif

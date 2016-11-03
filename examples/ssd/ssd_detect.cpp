@@ -243,10 +243,11 @@ DEFINE_double(confidence_threshold, 0.01,
     "Only store detections with score higher than the threshold.");
 
 int main(int argc, char** argv) {
+#ifdef USE_GLOG
   ::google::InitGoogleLogging(argv[0]);
   // Print output to stderr (while still logging)
   FLAGS_alsologtostderr = 1;
-
+#endif
 #ifndef GFLAGS_GFLAGS_H_
   namespace gflags = google;
 #endif
