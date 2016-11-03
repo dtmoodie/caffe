@@ -6,7 +6,7 @@
 
 #include "boost/scoped_ptr.hpp"
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "caffe/logging.hpp"
 
 #include "caffe/proto/caffe_pb.h"
 #include "caffe/util/db.hpp"
@@ -22,8 +22,9 @@ DEFINE_string(backend, "lmdb",
         "The backend {leveldb, lmdb} containing the images");
 
 int main(int argc, char** argv) {
+#ifdef USE_GLOG
   ::google::InitGoogleLogging(argv[0]);
-
+#endif
 #ifdef USE_OPENCV
 #ifndef GFLAGS_GFLAGS_H_
   namespace gflags = google;

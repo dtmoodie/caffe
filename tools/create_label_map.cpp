@@ -22,7 +22,7 @@
 #include <string>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "caffe/logging.hpp"
 
 #include "caffe/proto/caffe_pb.h"
 #include "caffe/util/io.hpp"

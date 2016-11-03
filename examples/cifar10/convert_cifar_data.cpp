@@ -10,7 +10,7 @@
 #include <string>
 
 #include "boost/scoped_ptr.hpp"
-#include "glog/logging.h"
+#include "caffe/logging.hpp"
 #include "google/protobuf/text_format.h"
 #include "stdint.h"
 

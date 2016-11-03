@@ -5,7 +5,7 @@ namespace bp = boost::python;
 #ifndef _MSC_VER
 #include <gflags/gflags.h>
 #endif
-#include <glog/logging.h>
+#include <caffe/logging.hpp>
 
 #include <cstring>
 #include <map>

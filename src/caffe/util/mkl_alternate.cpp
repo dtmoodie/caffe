@@ -1,5 +1,5 @@
 #include "caffe/util/mkl_alternate.hpp"
-#include <glog/logging.h>
+#include <caffe/logging.hpp>
 #include "caffe/export.hpp"
 
 #define DEFINE_VSL_UNARY_FUNC(name, operation) \

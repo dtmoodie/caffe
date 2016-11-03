@@ -3,10 +3,13 @@ set(Caffe_LINKER_LIBS "")
 
 # ---[ Boost
 if(MSVC)
-set(boost_components system thread filesystem program_options regex)
+  set(boost_components system thread filesystem program_options regex)
 else()
-set(boost_components system thread filesystem regex)
+  set(boost_components system thread filesystem regex)
 endif(MSVC)
+if(NOT USE_GLOG)
+  set(boost_components ${boost_components} log log_setup)
+endif(NOT USE_GLOG)
 find_package(Boost 1.46 REQUIRED COMPONENTS ${boost_components})
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 list(APPEND Caffe_LINKER_LIBS ${Boost_LIBRARIES})
@@ -19,9 +22,12 @@ find_package(Threads REQUIRED)
 list(APPEND Caffe_LINKER_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
 # ---[ Google-glog
-include("cmake/External/glog.cmake")
-include_directories(SYSTEM ${GLOG_INCLUDE_DIRS})
-list(APPEND Caffe_LINKER_LIBS ${GLOG_LIBRARIES})
+if(USE_GLOG)
+  include("cmake/External/glog.cmake")
+  include_directories(SYSTEM ${GLOG_INCLUDE_DIRS})
+  list(APPEND Caffe_LINKER_LIBS ${GLOG_LIBRARIES})
+  add_definitions(-DUSE_GLOG)
+endif(USE_GLOG)
 
 # ---[ Google-gflags
 include("cmake/External/gflags.cmake")

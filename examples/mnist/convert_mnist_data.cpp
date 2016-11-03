@@ -7,7 +7,7 @@
 //    http://yann.lecun.com/exdb/mnist/
 
 #include <gflags/gflags.h>
-#include <glog/logging.h>
+#include <caffe/logging.hpp>
 #include <google/protobuf/text_format.h>
 
 #if defined(USE_LEVELDB) && defined(USE_LMDB)
