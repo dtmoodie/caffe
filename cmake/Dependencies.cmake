@@ -27,6 +27,8 @@ if(USE_GLOG)
   include_directories(SYSTEM ${GLOG_INCLUDE_DIRS})
   list(APPEND Caffe_LINKER_LIBS ${GLOG_LIBRARIES})
   add_definitions(-DUSE_GLOG)
+else(USE_GLOG)
+  list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 endif(USE_GLOG)
 
 # ---[ Google-gflags
