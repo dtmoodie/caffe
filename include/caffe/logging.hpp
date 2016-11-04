@@ -179,7 +179,11 @@ namespace caffe
     public:
         throw_on_destroy(const char* function, const char* file, int line);
         std::ostringstream &stream();
+#ifdef _MSC_VER
         ~throw_on_destroy() throw();
+#else
+		~throw_on_destroy() noexcept(false);
+#endif
 
     private:
         std::ostringstream log_stream_;

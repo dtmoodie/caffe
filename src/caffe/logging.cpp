@@ -309,8 +309,11 @@ std::ostringstream &throw_on_destroy::stream()
 { 
     return log_stream_; 
 }
-
-throw_on_destroy::~throw_on_destroy() 
+#if _MSC_VER
+throw_on_destroy::~throw_on_destroy()
+#else
+throw_on_destroy::~throw_on_destroy() noexcept(false)
+#endif
 {
     std::stringstream ss;
     LOG(debug) << "\nException at" << print_callstack(0, true, ss) << "\n" << log_stream_.str();
