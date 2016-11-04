@@ -195,8 +195,50 @@ template void LRNLayer<double>::CrossChannelBackward_gpu(
     const vector<Blob<double>*>& top, const vector<bool>& propagate_down,
     const vector<Blob<double>*>& bottom);
 
+template <typename Dtype>
+void LRNLayer<Dtype>::Deconv_gpu(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  if (deconv_ignore_) {
+    // Deconv Option 1: pass through (ignore LRN layer):
+    Deconv_passthrough_gpu(top, propagate_down, bottom);
+  } else {
+    // Deconv Option 2: compute derivatives via backprop:
+    Backward_gpu(top, propagate_down, bottom);
+  }
+}
+
+template <typename Dtype>
+__global__ void LRNDeconv_passthrough(const int n, const Dtype* in_diff,
+    Dtype* out_diff) {
+  CUDA_KERNEL_LOOP(index, n) {
+    out_diff[index] = in_diff[index];
+  }
+}
+
+template <typename Dtype>
+void LRNLayer<Dtype>::Deconv_passthrough_gpu(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  // Option 2: pass through (ignore LRN layer)
+  if (propagate_down[0]) {
+    const Dtype* top_diff = top[0]->gpu_diff();
+    Dtype* bottom_diff = bottom[0]->mutable_gpu_diff();
+    const int count = bottom[0]->count();
+    // NOLINT_NEXT_LINE(whitespace/operators)
+    LRNDeconv_passthrough<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
+        count, top_diff, bottom_diff);
+    CUDA_POST_KERNEL_CHECK;
+  }
+}
+template void LRNLayer<float>::Deconv_passthrough_gpu(
+    const vector<Blob<float>*>& top, const vector<bool>& propagate_down,
+    const vector<Blob<float>*>& bottom);
+template void LRNLayer<double>::Deconv_passthrough_gpu(
+    const vector<Blob<double>*>& top, const vector<bool>& propagate_down,
+    const vector<Blob<double>*>& bottom);
 
 
-INSTANTIATE_LAYER_GPU_FUNCS(LRNLayer);
+
+//INSTANTIATE_LAYER_GPU_FUNCS(LRNLayer);
+INSTANTIATE_LAYER_GPU_FUNCS_WITH_DECONV(LRNLayer);
 
 }  // namespace caffe

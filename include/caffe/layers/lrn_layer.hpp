@@ -43,6 +43,15 @@ class CAFFE_EXPORT LRNLayer : public Layer<Dtype> {
   virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
 
+  virtual void Deconv_cpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  virtual void Deconv_gpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  virtual void Deconv_passthrough_cpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  virtual void Deconv_passthrough_gpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+
   virtual void CrossChannelForward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
   virtual void CrossChannelForward_gpu(const vector<Blob<Dtype>*>& bottom,
@@ -87,6 +96,9 @@ class CAFFE_EXPORT LRNLayer : public Layer<Dtype> {
   shared_ptr<EltwiseLayer<Dtype> > product_layer_;
   Blob<Dtype> product_input_;
   vector<Blob<Dtype>*> product_bottom_vec_;
+
+  // Fields used for deconv
+  bool deconv_ignore_;
 };
 
 }  // namespace caffe

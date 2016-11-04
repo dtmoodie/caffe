@@ -177,6 +177,27 @@ class CAFFE_EXPORT  Layer {
       const vector<Blob<Dtype>*>& bottom);
 
   /**
+   * @brief Given the top blob deconv info, compute the bottom blob deconv. Similar to Backward.
+   *
+   * The Deconv wrapper calls the relevant device wrapper function
+   * (Deconv_cpu or Deconv_gpu) to compute the bottom blob diffs given the
+   * top blob diffs.
+   *
+   * Your layer should implement Deconv_cpu and Deconv_gpu.
+   * 
+   * Note: By default, Deconv_gpu will just call Backward_gpu, and
+   * Deconv_cpu will just call Backward_cpu. In many cases this
+   * behavior is desired, e.g. for convolution or innerproduct or
+   * pooling layers. If this is not the desired behavior, override
+   * Deconv_cpu AND Deconv_gpu. If only one of Deconv_{cpu,gpu} is
+   * overridden, the other will still defer to Backward_{cpu,gpu},
+   * which will lead to confusing and inconsistent behavior!
+   */
+  inline void Deconv(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down,
+      const vector<Blob<Dtype>*>& bottom);
+
+  /**
    * @brief Returns the vector of learnable parameter blobs.
    */
   vector<shared_ptr<Blob<Dtype> > >& blobs() {
@@ -364,6 +385,26 @@ class CAFFE_EXPORT  Layer {
   }
 
   /**
+   * @brief Using the CPU device, compute the deconv (Zeiler et al, 2013) for the bottom blobs.
+   */
+  virtual void Deconv_cpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down,
+      const vector<Blob<Dtype>*>& bottom) {
+    // LOG(WARNING) << "Explicit Deconv_cpu not implemented for " << type() << " yet; falling back to backward_cpu.";
+    Backward_cpu(top, propagate_down, bottom);
+  }
+  /**
+   * @brief Using the GPU device, compute the deconv (Zeiler et al, 2013) for the bottom blobs.
+   *        Fall back to Deconv_cpu() if unavailable.
+   */
+  virtual void Deconv_gpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down,
+      const vector<Blob<Dtype>*>& bottom) {
+    // LOG(WARNING) << "Explicit Deconv_gpu not implemented for " << type() << " yet; falling back to backward_gpu.";
+    Backward_gpu(top, propagate_down, bottom);
+  }
+
+  /**
    * Called by the parent Layer's SetUp to check that the number of bottom
    * and top Blobs provided as input match the expected numbers specified by
    * the {ExactNum,Min,Max}{Bottom,Top}Blobs() functions.
@@ -496,6 +537,22 @@ inline void Layer<Dtype>::Backward(const vector<Blob<Dtype>*>& top,
     break;
   case Caffe::GPU:
     Backward_gpu(top, propagate_down, bottom);
+    break;
+  default:
+    LOG(FATAL) << "Unknown caffe mode.";
+  }
+}
+
+template <typename Dtype>
+inline void Layer<Dtype>::Deconv(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down,
+    const vector<Blob<Dtype>*>& bottom) {
+  switch (Caffe::mode()) {
+  case Caffe::CPU:
+    Deconv_cpu(top, propagate_down, bottom);
+    break;
+  case Caffe::GPU:
+    Deconv_gpu(top, propagate_down, bottom);
     break;
   default:
     LOG(FATAL) << "Unknown caffe mode.";

@@ -59,6 +59,133 @@ def _Net_params(self):
     return self._params_dict
 
 
+def _Net_zero(self, zero_param_diffs = True):
+    """
+    Set all activations (data and diffs) in the net to zero.
+
+    Take
+    zero_param_diffs: If True, also zero the parameter blob diffs,
+                      else skip parameter blobs.
+    """
+    
+    for blob_name, blob in self.blobs.items():
+        blob.data[...] = 0
+        blob.diff[...] = 0
+    if zero_param_diffs:
+        for param_name, blob_vec in self.params.items():
+            for blob in blob_vec:
+                blob.diff[...] = 0
+
+
+def _Net_backward_from_layer(self, start_name, start_diff, diffs=None, zero_higher=False):
+    """
+    Backward pass starting from somewhere in the middle of the
+    network, starting with the provided diffs.
+
+    Take
+    start_name: layer at which to begin the backward pass
+    start_diff: diff to set at start_name layer
+    diffs: list of diffs to return in addition to bottom diffs.
+    zero_higher: whether or not to zero out higher layers to reflect the true 0 derivative or leave them alone to save time.
+
+    Give
+    outs: {blob name: diff ndarray} dict.
+    """
+
+    if start_diff.shape != self.blobs[start_name].diff.shape:
+        raise Exception('Expected start_diff of shape %s but got %s' % (self.blobs[start_name].diff.shape, start_diff.shape))
+
+    self.blobs[start_name].diff[...] = start_diff
+
+    if zero_higher:
+        past_start = False
+        for blob_name, blob in self.blobs.items():
+            if past_start:
+                blob.diff[...] = 0
+            if blob_name == start_name:
+                past_start = True
+
+    return self.backward(start=start_name, diffs=diffs)
+
+
+def _Net_deconv_from_layer(self, start_name, start_diff, diffs=None, zero_higher=False):
+    """
+    Deconv pass starting from somewhere in the middle of the
+    network, starting with the provided diffs.
+
+    Take
+    start_name: layer at which to begin the deconv pass
+    start_diff: diff to set at start_name layer
+    diffs: list of diffs to return in addition to bottom diffs.
+    zero_higher: whether or not to zero out higher layers to reflect the true 0 derivative or leave them alone to save time.
+
+    Give
+    outs: {blob name: diff ndarray} dict.
+    """
+
+    if start_diff.shape != self.blobs[start_name].diff.shape:
+        raise Exception('Expected start_diff of shape %s but got %s' % (self.blobs[start_name].diff.shape, start_diff.shape))
+
+    self.blobs[start_name].diff[...] = start_diff
+
+    if zero_higher:
+        past_start = False
+        for blob_name, blob in self.blobs.items():
+            if past_start:
+                blob.diff[...] = 0
+            if blob_name == start_name:
+                past_start = True
+
+    return self.deconv(start=start_name, diffs=diffs)
+
+
+def _Net_deconv(self, diffs=None, start=None, end=None, **kwargs):
+    """
+    Deconv pass: prepare diffs and run the net backward in deconv mode. Just like _Net_Backward but calls Deconv instead.
+
+    Take
+    diffs: list of diffs to return in addition to bottom diffs.
+    kwargs: Keys are output blob names and values are diff ndarrays.
+            If None, top diffs are taken from forward loss.
+    start: optional name of layer at which to begin the backward pass
+    end: optional name of layer at which to finish the backward pass (inclusive)
+
+    Give
+    outs: {blob name: diff ndarray} dict.
+    """
+    if diffs is None:
+        diffs = []
+
+    if start is not None:
+        start_ind = list(self._layer_names).index(start)
+    else:
+        start_ind = len(self.layers) - 1
+
+    if end is not None:
+        end_ind = list(self._layer_names).index(end)
+        outputs = set([end] + diffs)
+    else:
+        end_ind = 0
+        outputs = set(self.inputs + diffs)
+
+    if kwargs:
+        if set(kwargs.keys()) != set(self.outputs):
+            raise Exception('Top diff arguments do not match net outputs.')
+        # Set top diffs according to defined shapes and make arrays single and
+        # C-contiguous as Caffe expects.
+        for top, diff in kwargs.iteritems():
+            if diff.ndim != 4:
+                raise Exception('{} diff is not 4-d'.format(top))
+            if diff.shape[0] != self.blobs[top].num:
+                raise Exception('Diff is not batch sized')
+            self.blobs[top].diff[...] = diff
+
+    self._deconv(start_ind, end_ind)
+
+    # Unpack diffs to extract
+    return {out: self.blobs[out].diff for out in outputs}
+
+
 @property
 def _Net_inputs(self):
     if not hasattr(self, '_input_list'):
@@ -322,8 +449,12 @@ def _Net_get_id_name(func, field):
 Net.blobs = _Net_blobs
 Net.blob_loss_weights = _Net_blob_loss_weights
 Net.params = _Net_params
+Net.zero = _Net_zero
+Net.backward_from_layer = _Net_backward_from_layer
+Net.deconv_from_layer = _Net_deconv_from_layer
 Net.forward = _Net_forward
 Net.backward = _Net_backward
+Net.deconv = _Net_deconv
 Net.forward_all = _Net_forward_all
 Net.forward_backward_all = _Net_forward_backward_all
 Net.set_input_arrays = _Net_set_input_arrays

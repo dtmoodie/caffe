@@ -57,8 +57,36 @@ void ReLULayer<Dtype>::Backward_gpu(const vector<Blob<Dtype>*>& top,
   }
 }
 
+template <typename Dtype>
+__global__ void ReLUDeconv(const int n, const Dtype* in_diff,
+    Dtype* out_diff) {
+  CUDA_KERNEL_LOOP(index, n) {
+    out_diff[index] = in_diff[index] > 0 ? in_diff[index] : 0;
+  }
+}
 
-INSTANTIATE_LAYER_GPU_FUNCS(ReLULayer);
+template <typename Dtype>
+void ReLULayer<Dtype>::Deconv_gpu(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down,
+    const vector<Blob<Dtype>*>& bottom) {
+  if (propagate_down[0]) {
+    const Dtype* bottom_data = bottom[0]->gpu_data();
+    const Dtype* top_diff = top[0]->gpu_diff();
+    Dtype* bottom_diff = bottom[0]->mutable_gpu_diff();
+    const int count = bottom[0]->count();
+    Dtype negative_slope = this->layer_param_.relu_param().negative_slope();
+    if (negative_slope != Dtype(0))
+      LOG(WARNING) << "negative_slope parameter = " << negative_slope << " but nonzero negative_slope params are not supported for Deconv through RELU.";
+    // NOLINT_NEXT_LINE(whitespace/operators)
+    ReLUDeconv<Dtype><<<CAFFE_GET_BLOCKS(count), CAFFE_CUDA_NUM_THREADS>>>(
+        count, top_diff, bottom_diff);
+    CUDA_POST_KERNEL_CHECK;
+  }
+}
+
+
+//INSTANTIATE_LAYER_GPU_FUNCS(ReLULayer);
+INSTANTIATE_LAYER_GPU_FUNCS_WITH_DECONV(ReLULayer);
 
 
 }  // namespace caffe

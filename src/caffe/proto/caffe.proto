@@ -971,6 +971,7 @@ message DataParameter {
   // DEPRECATED. Each solver accesses a different subset of the database.
   optional uint32 rand_skip = 7 [default = 0];
   optional DB backend = 8 [default = LEVELDB];
+
   // DEPRECATED. See TransformationParameter. For data pre-processing, we can do
   // simple scaling and subtracting the data mean, if provided. Note that the
   // mean subtraction is always carried out before scaling.
@@ -1270,6 +1271,13 @@ message LRNParameter {
     CUDNN = 2;
   }
   optional Engine engine = 6 [default = DEFAULT];
+
+  // Whether or not to skip the LRN layer during a deconv pass.  If
+  // this is true, activations in a deconv will pass through the LRN
+  // layer unaffected. If it is false, deconv activations will be
+  // affected by LRN layers the same as backprop diffs are (will pass
+  // through the derivative of the layer).
+  optional bool deconv_ignore = 7 [default = false];
 }
 
 message MemoryDataParameter {

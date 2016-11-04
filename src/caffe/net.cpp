@@ -639,6 +639,19 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
 }
 
 template <typename Dtype>
+void Net<Dtype>::DeconvFromTo(int start, int end) {
+  CHECK_GE(end, 0);
+  CHECK_LT(start, layers_.size());
+  for (int i = start; i >= end; --i) {
+    if (layer_need_backward_[i]) {
+      layers_[i]->Deconv(
+          top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
+      if (debug_info_) { DeconvDebugInfo(i); }
+    }
+  }
+}
+
+template <typename Dtype>
 void Net<Dtype>::ForwardDebugInfo(const int layer_id) {
   for (int top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
     const Blob<Dtype>& blob = *top_vecs_[layer_id][top_id];
@@ -687,6 +700,29 @@ void Net<Dtype>::BackwardDebugInfo(const int layer_id) {
         << "    [Backward] "
         << "Layer " << layer_names_[layer_id]
         << ", param blob " << param_id
+        << " diff: " << diff_abs_val_mean;
+  }
+}
+
+template <typename Dtype>
+void Net<Dtype>::DeconvDebugInfo(const int layer_id) {
+  const vector<Blob<Dtype>*>& bottom_vec = bottom_vecs_[layer_id];
+  for (int bottom_id = 0; bottom_id < bottom_vec.size(); ++bottom_id) {
+    if (!bottom_need_backward_[layer_id][bottom_id]) { continue; }
+    const Blob<Dtype>& blob = *bottom_vec[bottom_id];
+    const string& blob_name = blob_names_[bottom_id_vecs_[layer_id][bottom_id]];
+    const Dtype diff_abs_val_mean = blob.asum_diff() / blob.count();
+    LOG(INFO) << "    [Deconv] "
+        << "Layer " << layer_names_[layer_id] << ", bottom blob " << blob_name
+        << " diff: " << diff_abs_val_mean;
+  }
+  for (int param_id = 0; param_id < layers_[layer_id]->blobs().size();
+       ++param_id) {
+    if (!layers_[layer_id]->param_propagate_down(param_id)) { continue; }
+    const Blob<Dtype>& blob = *layers_[layer_id]->blobs()[param_id];
+    const Dtype diff_abs_val_mean = blob.asum_diff() / blob.count();
+    LOG(INFO) << "    [Deconv] "
+        << "Layer " << layer_names_[layer_id] << ", param blob " << param_id
         << " diff: " << diff_abs_val_mean;
   }
 }
@@ -776,6 +812,21 @@ void Net<Dtype>::Backward() {
                << "L1 norm = (" << asum_data << ", " << asum_diff << "); "
                << "L2 norm = (" << l2norm_data << ", " << l2norm_diff << ")";
   }
+}
+
+template <typename Dtype>
+void Net<Dtype>::DeconvFrom(int start) {
+  DeconvFromTo(start, 0);
+}
+
+template <typename Dtype>
+void Net<Dtype>::DeconvTo(int end) {
+  DeconvFromTo(layers_.size() - 1, end);
+}
+
+template <typename Dtype>
+void Net<Dtype>::Deconv() {
+  DeconvFromTo(layers_.size() - 1, 0);
 }
 
 template <typename Dtype>

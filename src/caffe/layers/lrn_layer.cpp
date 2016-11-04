@@ -14,6 +14,7 @@ void LRNLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
   alpha_ = this->layer_param_.lrn_param().alpha();
   beta_ = this->layer_param_.lrn_param().beta();
   k_ = this->layer_param_.lrn_param().k();
+  deconv_ignore_ = this->layer_param_.lrn_param().deconv_ignore();
   if (this->layer_param_.lrn_param().norm_region() ==
       LRNParameter_NormRegion_WITHIN_CHANNEL) {
     // Set up split_layer_ to use inputs in the numerator and denominator.
@@ -246,10 +247,36 @@ void LRNLayer<Dtype>::WithinChannelBackward(
   }
 }
 
+template <typename Dtype>
+void LRNLayer<Dtype>::Deconv_cpu(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  if (deconv_ignore_) {
+    // Deconv Option 1: pass through (ignore LRN layer):
+    Deconv_passthrough_cpu(top, propagate_down, bottom);
+  } else {
+    // Deconv Option 2: compute derivatives via backprop:
+    Backward_cpu(top, propagate_down, bottom);
+  }
+}
+
+template <typename Dtype>
+void LRNLayer<Dtype>::Deconv_passthrough_cpu(const vector<Blob<Dtype>*>& top,
+    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+  if (propagate_down[0]) {
+    const Dtype* top_diff = top[0]->cpu_diff();
+    Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
+    const int count = bottom[0]->count();
+    for (int i = 0; i < count; ++i) {
+      bottom_diff[i] = top_diff[i];
+    }
+  }  
+}
+
 #ifdef CPU_ONLY
-STUB_GPU(LRNLayer);
+STUB_GPU_WITH_DECONV(LRNLayer);
 STUB_GPU_FORWARD(LRNLayer, CrossChannelForward);
 STUB_GPU_BACKWARD(LRNLayer, CrossChannelBackward);
+STUB_GPU_DECONV(LRNLayer, Deconv_passthrough);
 #endif
 
 INSTANTIATE_CLASS(LRNLayer);
