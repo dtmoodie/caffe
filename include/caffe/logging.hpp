@@ -20,9 +20,10 @@
 #ifdef ERROR
 #undef ERROR
 #endif
+
 namespace boost {
     namespace log {
-        namespace v2_mt_nt6 {
+        namespace BOOST_LOG_VERSION_NAMESPACE {
             namespace trivial {
                 constexpr severity_level FATAL = fatal;
                 constexpr severity_level ERROR = error;
