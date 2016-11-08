@@ -23,7 +23,7 @@
 
 namespace boost {
     namespace log {
-        namespace BOOST_LOG_VERSION_NAMESPACE {
+        inline namespace BOOST_LOG_VERSION_NAMESPACE {
             namespace trivial {
                 constexpr severity_level FATAL = fatal;
                 constexpr severity_level ERROR = error;

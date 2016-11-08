@@ -484,7 +484,9 @@ RegisterBrewFunction(time);
 
 int main(int argc, char** argv) {
   // Print output to stderr (while still logging).
+#ifdef USE_GLOG
   FLAGS_alsologtostderr = 1;
+#endif
   // Set version
   gflags::SetVersionString(STRINGIZE2(CAFFE_VERSION));
   // Usage message.
