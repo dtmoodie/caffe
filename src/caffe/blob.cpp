@@ -19,6 +19,15 @@ void Blob<Dtype>::Reshape(const int num, const int channels, const int height,
   Reshape(shape);
 }
 
+std::string shapeStr(const std::vector<int>& shape){
+  std::stringstream ss;
+  for(int i = 0; i < shape.size(); ++i){
+    if(i != 0) ss << ",";
+    ss << shape[i];
+  }
+  return ss.str();
+}
+
 template <typename Dtype>
 void Blob<Dtype>::Reshape(const vector<int>& shape) {
   CHECK_LE(shape.size(), kMaxBlobAxes);
@@ -31,7 +40,7 @@ void Blob<Dtype>::Reshape(const vector<int>& shape) {
   for (int i = 0; i < shape.size(); ++i) {
     CHECK_GE(shape[i], 0);
     if (count_ != 0) {
-      CHECK_LE(shape[i], INT_MAX / count_) << "blob size exceeds INT_MAX";
+      CHECK_LE(shape[i], INT_MAX / count_) << "blob size exceeds INT_MAX [" << shapeStr(shape) << "]";
     }
     count_ *= shape[i];
     shape_[i] = shape[i];
