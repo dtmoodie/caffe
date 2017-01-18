@@ -763,6 +763,17 @@ message LossParameter {
   // is not specified, then setting this to false will be equivalent to
   // normalization = BATCH_SIZE to be consistent with previous behavior.
   optional bool normalize = 2;
+  // Added by Olaf:
+  // provide loss weights for different classes to compensate for 
+  // unbalanaced training data or different importance of the classes 
+  repeated float class_loss_weights = 4;
+  // Added by Mohamed Ezz
+  // This option is valid only for binary classification
+  // Class weight of class=1 is applied to pixels
+  // where the *label* is 1  
+  // If this option is true, class weight will be applied also to
+  // pixels where the *prediction* is 1.  
+  optional bool weigh_prediction_class = 5 [default = false];
 }
 
 // Messages that store parameters used by individual layer types follow, in

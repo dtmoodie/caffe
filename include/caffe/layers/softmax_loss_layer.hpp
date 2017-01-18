@@ -110,12 +110,22 @@ class CAFFE_EXPORT SoftmaxWithLossLayer : public LossLayer<Dtype> {
   vector<Blob<Dtype>*> softmax_top_vec_;
   /// Whether to ignore instances with a certain label.
   bool has_ignore_label_;
+  /// Whether to normalize the loss by the total number of values present
+  /// (otherwise just by the batch size).
+  bool normalize_;
   /// The label indicating that an instance should be ignored.
   int ignore_label_;
   /// How to normalize the output loss.
   LossParameter_NormalizationMode normalization_;
 
   int softmax_axis_, outer_num_, inner_num_;
+
+  // Added by Olaf:
+  // provide loss weights for different classes to compensate for
+  // unbalanaced training data or different importance of the classes
+  vector<float> class_loss_weights_;
+  // Adde by Mohamed Ezz
+  bool weigh_prediction_class_;
 };
 
 }  // namespace caffe
