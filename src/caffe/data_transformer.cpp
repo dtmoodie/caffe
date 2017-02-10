@@ -791,7 +791,7 @@ void DataTransformer<Dtype>::Transform(const cv::Mat& cv_img,
   CHECK_EQ(channels, img_channels);
   CHECK_GE(num, 1);
 
-  const int crop_size = param_.crop_size();
+
   const Dtype scale = param_.scale();
   *do_mirror = param_.mirror() && Rand(2);
   const bool has_mean_file = param_.has_mean_file();
@@ -838,7 +838,7 @@ void DataTransformer<Dtype>::Transform(const cv::Mat& cv_img,
     crop_w = crop_size;
   }
 
-  cv::Mat cv_resized_image, cv_noised_image, cv_cropped_image;
+
   if (param_.has_resize_param()) {
     cv_resized_image = ApplyResize(cv_img, param_.resize_param());
   } else {
@@ -849,8 +849,8 @@ void DataTransformer<Dtype>::Transform(const cv::Mat& cv_img,
   } else {
     cv_noised_image = cv_resized_image;
   }
-  int img_height = cv_noised_image.rows;
-  int img_width = cv_noised_image.cols;
+  img_height = cv_noised_image.rows;
+  img_width = cv_noised_image.cols;
   CHECK_GE(img_height, crop_h);
   CHECK_GE(img_width, crop_w);
 

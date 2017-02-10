@@ -37,7 +37,7 @@ void MultiBoxLossLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype>*>& bottom,
     LOG(WARNING) << "do_neg_mining is deprecated, use mining_type instead.";
     do_neg_mining_ = multibox_loss_param.do_neg_mining();
     CHECK_EQ(do_neg_mining_,
-             mining_type_ != MultiBoxLossParameter_MiningType_NONE);
+             (mining_type_ != MultiBoxLossParameter_MiningType_NONE));
   }
   do_neg_mining_ = mining_type_ != MultiBoxLossParameter_MiningType_NONE;
 

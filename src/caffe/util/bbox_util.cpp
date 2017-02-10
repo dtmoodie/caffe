@@ -1574,7 +1574,7 @@ void EncodeConfPrediction(const Dtype* conf_data, const int num,
     LOG(WARNING) << "do_neg_mining is deprecated, use mining_type instead.";
     do_neg_mining = multibox_loss_param.do_neg_mining();
     CHECK_EQ(do_neg_mining,
-             mining_type != MultiBoxLossParameter_MiningType_NONE);
+             (mining_type != MultiBoxLossParameter_MiningType_NONE));
   }
   do_neg_mining = mining_type != MultiBoxLossParameter_MiningType_NONE;
   const ConfLossType conf_loss_type = multibox_loss_param.conf_loss_type();
