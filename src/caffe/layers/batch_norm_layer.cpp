@@ -144,6 +144,12 @@ void BatchNormLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 
   const Dtype* bottom_data = bottom[0]->cpu_data();
   Dtype* top_data = top[0]->mutable_cpu_data();
+  int num = bottom[0]->shape(0);
+  int spatial_dim = bottom[0]->count()/(bottom[0]->shape(0)*channels_);
+
+  if (bottom[0] != top[0]) {
+    caffe_copy(bottom[0]->count(), bottom_data, top_data);
+  }
 
   if (use_global_stats_) {
     // use global mean/variance
@@ -292,6 +298,7 @@ void BatchNormLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   multicast_cpu(N, C, S, inv_variance_.cpu_data(), temp_.mutable_cpu_data());
   caffe_mul(top_size, bottom_diff, temp_.cpu_data(), bottom_diff);
 }
+
 
 #ifdef CPU_ONLY
 STUB_GPU(BatchNormLayer);

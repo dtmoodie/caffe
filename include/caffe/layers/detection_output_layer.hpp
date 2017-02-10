@@ -86,6 +86,7 @@ class CAFFE_EXPORT DetectionOutputLayer : public Layer<Dtype> {
 
   float nms_threshold_;
   int top_k_;
+  float eta_;
 
   bool need_save_;
   string output_directory_;
@@ -97,12 +98,18 @@ class CAFFE_EXPORT DetectionOutputLayer : public Layer<Dtype> {
   vector<pair<int, int> > sizes_;
   int num_test_image_;
   int name_count_;
+  bool has_resize_;
+  ResizeParameter resize_param_;
 
   ptree detections_;
 
   bool visualize_;
   float visualize_threshold_;
   shared_ptr<DataTransformer<Dtype> > data_transformer_;
+  string save_file_;
+  Blob<Dtype> bbox_preds_;
+  Blob<Dtype> bbox_permute_;
+  Blob<Dtype> conf_permute_;
 };
 
 }  // namespace caffe

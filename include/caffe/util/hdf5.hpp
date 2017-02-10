@@ -11,23 +11,28 @@
 namespace caffe {
 
 template <typename Dtype>
-CAFFE_EXPORT void hdf5_load_nd_dataset_helper(
+void hdf5_load_nd_dataset_helper(
     hid_t file_id, const char* dataset_name_, int min_dim, int max_dim,
     Blob<Dtype>* blob);
 
 template <typename Dtype>
-CAFFE_EXPORT void hdf5_load_nd_dataset(
+void hdf5_load_nd_dataset(
     hid_t file_id, const char* dataset_name_, int min_dim, int max_dim,
     Blob<Dtype>* blob);
 
 template <typename Dtype>
-CAFFE_EXPORT void hdf5_save_nd_dataset(
+void hdf5_save_nd_dataset(
     const hid_t file_id, const string& dataset_name, const Blob<Dtype>& blob,
     bool write_diff = false);
 
 CAFFE_EXPORT int hdf5_load_int(hid_t loc_id, const string& dataset_name);
-CAFFE_EXPORT void hdf5_save_int(hid_t loc_id,
-                                const string& dataset_name, int i);
+CAFFE_EXPORT void hdf5_save_int(hid_t loc_id, const string& dataset_name, int i);
+
+template <typename Dtype> CAFFE_EXPORT
+Dtype hdf5_load_float(hid_t loc_id, const string& dataset_name);
+template <typename Dtype> CAFFE_EXPORT
+void hdf5_save_float(hid_t loc_id, const string& dataset_name, Dtype f);
+
 CAFFE_EXPORT string hdf5_load_string(hid_t loc_id, const string& dataset_name);
 CAFFE_EXPORT void hdf5_save_string(hid_t loc_id, const string& dataset_name,
                       const string& s);
