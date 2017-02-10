@@ -7,6 +7,10 @@
 
 #else
 
+#ifdef DISCARD_MESSAGE
+#undef DISCARD_MESSAGE
+#endif
+
 #define DISCARD_MESSAGE true ? (void)0 : caffe::LogMessageVoidify() & \
     caffe::eat_message().stream()
 
@@ -33,11 +37,20 @@ namespace boost {
         }
     }
 }
+
+#ifdef LOG_EVERY_N_VARNAME
+#undef LOG_EVERY_N_VARNAME
+#endif
+
 #define LOG_EVERY_N_VARNAME(base, line) LOG_EVERY_N_VARNAME_CONCAT(base, line)
 #define LOG_EVERY_N_VARNAME_CONCAT(base, line) base ## line
 
 #define LOG_OCCURRENCES LOG_EVERY_N_VARNAME(occurrences_, __LINE__)
 #define LOG_OCCURRENCES_MOD_N LOG_EVERY_N_VARNAME(occurrences_mod_n_, __LINE__)
+
+#ifdef LOG_EVERY_N
+#undef LOG_EVERY_N
+#endif
 
 #define LOG_EVERY_N(severity, n) \
     static int LOG_OCCURRENCES = 0, LOG_OCCURRENCES_MOD_N = 0; \
@@ -46,11 +59,18 @@ namespace boost {
     if (LOG_OCCURRENCES_MOD_N == 1) \
         LOG(severity)
 
+#ifdef LOG
+#undef LOG
+#endif
 
 #define LOG(severity) BOOST_LOG_TRIVIAL(severity) \
 << "[" << __FUNCTION__ << "] "
 
 #define LOG_IF(severity, condition) if(condition) LOG(severity)
+
+#ifdef LOG_FIRST_N
+#undef LOG_FIRST_N
+#endif
 
 #define LOG_FIRST_N(severity, n) \
 static int LOG_OCCURRENCES = 0;  \
@@ -59,10 +79,33 @@ if(LOG_OCCURRENCES <= n)         \
 if(LOG_OCCURRENCES <= n)         \
   LOG(severity)
 
+#ifdef CHECK_OP
+#undef CHECK_OP
+#endif
+
 #define CHECK_OP(op, lhs, rhs) \
 if(!(lhs op rhs)) \
 caffe::throw_on_destroy(__FUNCTION__, __FILE__, __LINE__).stream() \
 << "[" #lhs " " #op " " #rhs "] failed (" << lhs << " " #op " " << rhs << ")"
+
+#ifdef CHECK_EQ
+#undef CHECK_EQ
+#endif
+#ifdef CHECK_NE
+#undef CHECK_NE
+#endif
+#ifdef CHECK_LE
+#undef CHECK_LE
+#endif
+#ifdef CHECK_LT
+#undef CHECK_LT
+#endif
+#ifdef CHECK_GE
+#undef CHECK_GE
+#endif
+#ifdef CHECK_GT
+#undef CHECK_GT
+#endif
 
 #define CHECK_EQ(lhs, rhs)  CHECK_OP(==, lhs, rhs)
 #define CHECK_NE(lhs, rhs)  CHECK_OP(!=, lhs, rhs)
@@ -70,6 +113,10 @@ caffe::throw_on_destroy(__FUNCTION__, __FILE__, __LINE__).stream() \
 #define CHECK_LT(lhs, rhs)  CHECK_OP(< , lhs, rhs)
 #define CHECK_GE(lhs, rhs)  CHECK_OP(>=, lhs, rhs)
 #define CHECK_GT(lhs, rhs)  CHECK_OP(> , lhs, rhs)
+
+#ifdef CHECK
+#undef CHECK
+#endif
 
 #define CHECK(exp)                                                    \
 if(!(exp))                                                            \
@@ -106,17 +153,67 @@ caffe::throw_on_destroy(__FUNCTION__, __FILE__, __LINE__).stream() \
 
 #else // __CUDA_ARCH__
 
+#ifdef LOG_EVERY_N_VARNAME
+#undef LOG_EVERY_N_VARNAME
+#endif
+
+#ifdef LOG_EVERY_N_VARNAME_CONCAT
+#undef LOG_EVERY_N_VARNAME_CONCAT
+#endif
+
 #define LOG_EVERY_N_VARNAME(base, line) DISCARD_MESSAGE
 #define LOG_EVERY_N_VARNAME_CONCAT(base, line) DISCARD_MESSAGE
+
+#ifdef LOG_OCCURRENCES
+#undef LOG_OCCURRENCES
+#endif
+
+#ifdef LOG_OCCURRENCES_MOD_N
+#undef LOG_OCCURRENCES_MOD_N
+#endif
 
 #define LOG_OCCURRENCES DISCARD_MESSAGE
 #define LOG_OCCURRENCES_MOD_N DISCARD_MESSAGE
 
+#ifdef LOG
+#undef LOG
+#endif
+
 #define LOG(severity) DISCARD_MESSAGE
+
+#ifdef LOG_FIRST_N
+#undef LOG_FIRST_N
+#endif
 
 #define LOG_FIRST_N(severity, n) DISCARD_MESSAGE
 
+#ifdef CHECK_OP
+#undef CHECK_OP
+#endif
+
 #define CHECK_OP(op, lhs, rhs) DISCARD_MESSAGE
+
+#ifdef CHECK_EQ
+#undef CHECK_EQ
+#endif
+#ifdef CHECK_NE
+#undef CHECK_NE
+#endif
+#ifdef CHECK_LE
+#undef CHECK_LE
+#endif
+#ifdef CHECK_LT
+#undef CHECK_LT
+#endif
+#ifdef CHECK_GE
+#undef CHECK_GE
+#endif
+#ifdef CHECK_GT
+#undef CHECK_GT
+#endif
+#ifdef CHECK
+#undef CHECK
+#endif
 
 #define CHECK_EQ(lhs, rhs)  CHECK_OP(==, lhs, rhs)
 #define CHECK_NE(lhs, rhs)  CHECK_OP(!=, lhs, rhs)

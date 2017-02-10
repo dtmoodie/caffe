@@ -10,6 +10,7 @@
 #include "caffe/layer_factory.hpp"
 #include "caffe/proto/caffe_pb.h"
 #include "caffe/util/math_functions.hpp"
+#include "caffe/profiling.hpp"
 
 /**
  Forward declare boost::thread instead of including boost/thread.hpp
@@ -492,6 +493,7 @@ template <typename Dtype>
 inline Dtype Layer<Dtype>::Forward(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   // Lock during forward to ensure sequential forward
+  PROFILE_LAYER
   Lock();
   Dtype loss = 0;
   Reshape(bottom, top);

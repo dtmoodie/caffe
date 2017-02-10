@@ -294,3 +294,5 @@ if(APPLE)
     caffe_option(USE_libstdcpp "Use libstdc++ instead of libc++" (CUDA_VERSION VERSION_LESS 7.0))
   endif()
 endif()
+
+list(APPEND Caffe_LINKER_LIBS "nvToolsExt")
