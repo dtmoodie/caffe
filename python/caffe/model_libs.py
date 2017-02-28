@@ -50,6 +50,7 @@ def ConvBNLayer(net, from_layer, out_layer, use_bn, use_relu, num_output,
             dict(lr_mult=0, decay_mult=0)],
         'eps': eps,
         'moving_average_fraction': moving_average_fraction,
+        'engine': P.BatchNorm.CAFFE
         }
     bn_lr_mult = lr_mult
     if use_global_stats:

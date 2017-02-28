@@ -851,15 +851,18 @@ void Net<Dtype>::CopyTrainedLayersFrom(const NetParameter& param) {
       LOG(INFO) << "Ignoring source layer " << source_layer_name;
       continue;
     }
-    DLOG(INFO) << "Copying source layer " << source_layer_name;
+    LOG(INFO) << "Copying source layer " << source_layer_name;
     vector<shared_ptr<Blob<Dtype> > >& target_blobs =
         layers_[target_layer_id]->blobs();
     CHECK_EQ(target_blobs.size(), source_layer.blobs_size())
         << "Incompatible number of blobs for layer " << source_layer_name;
     for (int j = 0; j < target_blobs.size(); ++j) {
+      LOG(INFO) << "Copying blob " << j;
       if (!target_blobs[j]->ShapeEquals(source_layer.blobs(j))) {
         Blob<Dtype> source_blob;
         const bool kReshape = true;
+        CHECK_EQ(target_blobs[j]->count(), source_layer.blobs(j).data_size())
+          << "Total data amount not equal for blob " << j << " for layer " << source_layer_name;
         source_blob.FromProto(source_layer.blobs(j), kReshape);
         LOG(FATAL) << "Cannot copy param " << j << " weights from layer '"
             << source_layer_name << "'; shape mismatch.  Source param shape is "
@@ -869,6 +872,8 @@ void Net<Dtype>::CopyTrainedLayersFrom(const NetParameter& param) {
             << "copying from a saved net, rename the layer.";
       }
       const bool kReshape = false;
+      CHECK_EQ(target_blobs[j]->count(), source_layer.blobs(j).data_size())
+          << "Total data amount not equal for blob " << j << " for layer " << source_layer_name;
       target_blobs[j]->FromProto(source_layer.blobs(j), kReshape);
     }
   }
