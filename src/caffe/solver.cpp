@@ -207,9 +207,18 @@ void Solver<Dtype>::InitTestNets() {
 
 template <typename Dtype>
 void Solver<Dtype>::Step(int iters) {
-  const int start_iter = iter_;
+  //const int start_iter = iter_;
+  // HOTFIX1: enabling average loss in py-faster-rcnn (Don't push to the upstream)
+  int start_iter = this->start_iter_;
   const int stop_iter = iter_ + iters;
   int average_loss = this->param_.average_loss();
+
+  // HOTFIX1
+  if (losses_.size() == 0) {
+     this->start_iter_ = iter_;
+     start_iter = iter_;
+  }
+  
   losses_.clear();
   smoothed_loss_ = 0;
   iteration_timer_.Start();

@@ -125,7 +125,10 @@ class CAFFE_EXPORT Solver {
   vector<shared_ptr<Net<Dtype> > > test_nets_;
   vector<Callback*> callbacks_;
   vector<Dtype> losses_;
-  Dtype smoothed_loss_;
+  Dtype smoothed_loss_ = 0;
+
+  // HOTFIX1: enabling average loss in py-faster-rcnn
+  int start_iter_ = 0;
 
   // The root solver that holds root nets (actually containing shared layers)
   // in data parallelism
