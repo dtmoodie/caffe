@@ -24,7 +24,7 @@ namespace caffe {
  *  Fast R-CNN, Ross Girshick, ICCV 2015.
  */
 template <typename Dtype>
-class CAFFE_EXPORT SmoothL1LossLayer : public LossLayer<Dtype> {
+class SmoothL1LossLayer : public LossLayer<Dtype> {
  public:
   explicit SmoothL1LossLayer(const LayerParameter& param)
       : LossLayer<Dtype>(param), diff_() {}
@@ -35,8 +35,9 @@ class CAFFE_EXPORT SmoothL1LossLayer : public LossLayer<Dtype> {
 
   virtual inline const char* type() const { return "SmoothL1Loss"; }
 
+  virtual inline int ExactNumBottomBlobs() const { return -1; }
   virtual inline int MinBottomBlobs() const { return 2; }
-  virtual inline int MaxBottomBlobs() const { return 3; }
+  virtual inline int MaxBottomBlobs() const { return 4; }
 
   /**
    * Unlike most loss layers, in the SmoothL1LossLayer we can backpropagate
@@ -47,12 +48,10 @@ class CAFFE_EXPORT SmoothL1LossLayer : public LossLayer<Dtype> {
   }
 
  protected:
-  /// @copydoc SmoothL1LossLayer
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
   virtual void Forward_gpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
-
   virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
   virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
@@ -60,7 +59,9 @@ class CAFFE_EXPORT SmoothL1LossLayer : public LossLayer<Dtype> {
 
   Blob<Dtype> diff_;
   Blob<Dtype> errors_;
+  Blob<Dtype> ones_;
   bool has_weights_;
+  Dtype sigma2_;
 };
 
 }  // namespace caffe
