@@ -663,6 +663,17 @@ cv::Mat DecodeDatumToCVMatNative(const Datum& datum) {
   }
   return cv_img;
 }
+
+cv::Mat DatumToCVMatNative(const Datum& datum)
+{
+  CHECK(!datum.encoded()) << "Datum encoded";
+  cv::Mat cv_img;
+  const string& data = datum.data();
+  cv_img.create(datum.height(), datum.width(), CV_MAKE_TYPE(CV_8U, datum.channels()));
+  memcpy(cv_img.data, data.data(), data.size());
+  return cv_img;
+}
+
 cv::Mat DecodeDatumToCVMat(const Datum& datum, bool is_color) {
   cv::Mat cv_img;
   CHECK(datum.encoded()) << "Datum not encoded";
@@ -673,6 +684,19 @@ cv::Mat DecodeDatumToCVMat(const Datum& datum, bool is_color) {
   cv_img = cv::imdecode(vec_data, cv_read_flag);
   if (!cv_img.data) {
     LOG(ERROR) << "Could not decode datum ";
+  }
+  return cv_img;
+}
+
+cv::Mat DatumToCVMat(const Datum& datum, bool is_color) {
+  cv::Mat cv_img;
+  CHECK(!datum.encoded()) << "Datum encoded";
+  const string& data = datum.data();
+  cv_img.create(datum.height(), datum.width(), datum.channels());
+  memcpy(cv_img.data, data.data(), data.size());
+  if(cv_img.channels() == 1 && is_color == true)
+  {
+      cv::cvtColor(cv_img, cv_img, cv::COLOR_GRAY2BGR);
   }
   return cv_img;
 }
@@ -708,6 +732,16 @@ void EncodeCVMatToDatum(const cv::Mat& cv_img, const string& encoding,
   datum->set_height(cv_img.rows);
   datum->set_width(cv_img.cols);
   datum->set_encoded(true);
+}
+
+void CVMatToDatum(const cv::Mat& cv_img, const string& encoding,
+                        Datum* datum)
+{
+    datum->set_data(cv_img.data, cv_img.rows * cv_img.step);
+    datum->set_channels(cv_img.channels());
+    datum->set_height(cv_img.rows);
+    datum->set_width(cv_img.cols);
+    datum->set_encoded(false);
 }
 
 void CVMatToDatum(const cv::Mat& cv_img, Datum* datum) {

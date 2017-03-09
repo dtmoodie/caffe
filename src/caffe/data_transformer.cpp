@@ -738,16 +738,20 @@ void DataTransformer<Dtype>::DistortImage(const Datum& datum,
     // Distort the image.
     cv::cuda::GpuMat distort_img =
             ApplyDistort(cv::cuda::GpuMat(cv_img), param_.distort_param());
-    //cv::Mat distort_img = ApplyDistort(cv_img, param_.distort_param());
     // Save the image into datum.
-    EncodeCVMatToDatum(cv::Mat(distort_img), "jpg", distort_datum);
+    //EncodeCVMatToDatum(cv::Mat(distort_img), "jpg", distort_datum);
+    CVMatToDatum(cv::Mat(distort_img), distort_datum);
     distort_datum->set_label(datum.label());
     return;
 #else
     LOG(FATAL) << "Encoded datum requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV
   } else {
-    LOG(ERROR) << "Only support encoded datum now";
+    //LOG(ERROR) << "Only support encoded datum now";
+    cv::Mat cv_img = DatumToCVMatNative(datum);
+    cv::cuda::GpuMat distort_img =
+            ApplyDistort(cv::cuda::GpuMat(cv_img), param_.distort_param());
+    CVMatToDatum(cv::Mat(distort_img), distort_datum);
   }
 }
 

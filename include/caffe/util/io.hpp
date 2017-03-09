@@ -275,8 +275,13 @@ CAFFE_EXPORT cv::Mat ReadImageToCVMat(const string& filename);
 CAFFE_EXPORT cv::Mat DecodeDatumToCVMatNative(const Datum& datum);
 CAFFE_EXPORT cv::Mat DecodeDatumToCVMat(const Datum& datum, bool is_color);
 
+CAFFE_EXPORT cv::Mat DatumToCVMatNative(const Datum& datum);
+CAFFE_EXPORT cv::Mat DatumToCVMat(const Datum& datum, bool is_color);
+
 CAFFE_EXPORT void EncodeCVMatToDatum(const cv::Mat& cv_img, const string& encoding,
                         Datum* datum);
+
+CAFFE_EXPORT void CVMatToDatum(const cv::Mat& cv_img, Datum* datum);
 
 CAFFE_EXPORT void CVMatToDatum(const cv::Mat& cv_img, Datum* datum);
 #endif  // USE_OPENCV
