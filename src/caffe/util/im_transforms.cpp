@@ -11,6 +11,9 @@
 #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
 #define CV_THRESH_BINARY_INV cv::THRESH_BINARY_INV
 #define CV_THRESH_OTSU cv::THRESH_OTSU
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudaimgproc.hpp>
 #endif
 #endif  // USE_OPENCV
 
@@ -214,6 +217,20 @@ cv::Rect CropMask(const cv::Mat& src, T point, int padding) {
 template
 cv::Rect CropMask(const cv::Mat& src, uchar point, int padding);
 
+cv::cuda::GpuMat colorReduce(const cv::cuda::GpuMat& image, int div) {
+  cv::cuda::GpuMat out_img;
+
+  cv::Mat lookUpTable(1, 256, CV_8U);
+  uchar* p = lookUpTable.data;
+  const int div_2 = div / 2;
+  for ( int i = 0; i < 256; ++i ) {
+    p[i] = i / div * div + div_2;
+  }
+  cv::cuda::createLookUpTable(lookUpTable)->transform(image, out_img);
+  //cv::cuda::LUT(image, lookUpTable, out_img);
+  return out_img;
+}
+
 cv::Mat colorReduce(const cv::Mat& image, int div) {
   cv::Mat out_img;
   cv::Mat lookUpTable(1, 256, CV_8U);
@@ -293,6 +310,36 @@ cv::Mat AspectKeepingResizeAndPad(const cv::Mat& in_img,
   return img_resized;
 }
 
+cv::cuda::GpuMat AspectKeepingResizeAndPad(const cv::cuda::GpuMat& in_img,
+                                  const int new_width, const int new_height,
+                                  const int pad_type,  const cv::Scalar pad_val,
+                                  const int interp_mode) {
+  cv::cuda::GpuMat img_resized;
+  float orig_aspect = static_cast<float>(in_img.cols) / in_img.rows;
+  float new_aspect = static_cast<float>(new_width) / new_height;
+
+  if (orig_aspect > new_aspect) {
+    int height = floor(static_cast<float>(new_width) / orig_aspect);
+    cv::cuda::resize(in_img, img_resized, cv::Size(new_width, height), 0, 0,
+               interp_mode);
+    cv::Size resSize = img_resized.size();
+    int padding = floor((new_height - resSize.height) / 2.0);
+    cv::cuda::copyMakeBorder(img_resized, img_resized, padding,
+                       new_height - resSize.height - padding, 0, 0,
+                       pad_type, pad_val);
+  } else {
+    int width = floor(orig_aspect * new_height);
+    cv::cuda::resize(in_img, img_resized, cv::Size(width, new_height), 0, 0,
+               interp_mode);
+    cv::Size resSize = img_resized.size();
+    int padding = floor((new_width - resSize.width) / 2.0);
+    cv::cuda::copyMakeBorder(img_resized, img_resized, 0, 0, padding,
+                       new_width - resSize.width - padding,
+                       pad_type, pad_val);
+  }
+  return img_resized;
+}
+
 cv::Mat AspectKeepingResizeBySmall(const cv::Mat& in_img,
                                    const int new_width,
                                    const int new_height,
@@ -308,6 +355,26 @@ cv::Mat AspectKeepingResizeBySmall(const cv::Mat& in_img,
   } else {
     int width = floor(orig_aspect * new_height);
     cv::resize(in_img, img_resized, cv::Size(width, new_height), 0, 0,
+               interp_mode);
+  }
+  return img_resized;
+}
+
+cv::cuda::GpuMat AspectKeepingResizeBySmall(const cv::cuda::GpuMat& in_img,
+                                   const int new_width,
+                                   const int new_height,
+                                   const int interp_mode) {
+  cv::cuda::GpuMat img_resized;
+  float orig_aspect = static_cast<float>(in_img.cols) / in_img.rows;
+  float new_aspect = static_cast<float> (new_width) / new_height;
+
+  if (orig_aspect < new_aspect) {
+    int height = floor(static_cast<float>(new_width) / orig_aspect);
+    cv::cuda::resize(in_img, img_resized, cv::Size(new_width, height), 0, 0,
+               interp_mode);
+  } else {
+    int width = floor(orig_aspect * new_height);
+    cv::cuda::resize(in_img, img_resized, cv::Size(width, new_height), 0, 0,
                interp_mode);
   }
   return img_resized;
@@ -405,6 +472,91 @@ cv::Mat ApplyResize(const cv::Mat& in_img, const ResizeParameter& param) {
   switch (param.resize_mode()) {
     case ResizeParameter_Resize_mode_WARP:
       cv::resize(in_img, out_img, cv::Size(new_width, new_height), 0, 0,
+                 interp_mode);
+      break;
+    case ResizeParameter_Resize_mode_FIT_LARGE_SIZE_AND_PAD:
+      out_img = AspectKeepingResizeAndPad(in_img, new_width, new_height,
+                                          pad_mode, pad_val, interp_mode);
+      break;
+    case ResizeParameter_Resize_mode_FIT_SMALL_SIZE:
+      out_img = AspectKeepingResizeBySmall(in_img, new_width, new_height,
+                                           interp_mode);
+      break;
+    default:
+      LOG(INFO) << "Unknown resize mode.";
+  }
+  return  out_img;
+}
+
+cv::cuda::GpuMat ApplyResize(const cv::cuda::GpuMat& in_img, const ResizeParameter& param) {
+  cv::cuda::GpuMat out_img;
+
+  // Reading parameters
+  const int new_height = param.height();
+  const int new_width = param.width();
+
+  int pad_mode = cv::BORDER_CONSTANT;
+  switch (param.pad_mode()) {
+    case ResizeParameter_Pad_mode_CONSTANT:
+      break;
+    case ResizeParameter_Pad_mode_MIRRORED:
+      pad_mode = cv::BORDER_REFLECT101;
+      break;
+    case ResizeParameter_Pad_mode_REPEAT_NEAREST:
+      pad_mode = cv::BORDER_REPLICATE;
+      break;
+    default:
+      LOG(FATAL) << "Unknown pad mode.";
+  }
+
+  int interp_mode = cv::INTER_LINEAR;
+  int num_interp_mode = param.interp_mode_size();
+  if (num_interp_mode > 0) {
+    vector<float> probs(num_interp_mode, 1.f / num_interp_mode);
+    int prob_num = roll_weighted_die(probs);
+    switch (param.interp_mode(prob_num)) {
+      case ResizeParameter_Interp_mode_AREA:
+        interp_mode = cv::INTER_AREA;
+        break;
+      case ResizeParameter_Interp_mode_CUBIC:
+        interp_mode = cv::INTER_CUBIC;
+        break;
+      case ResizeParameter_Interp_mode_LINEAR:
+        interp_mode = cv::INTER_LINEAR;
+        break;
+      case ResizeParameter_Interp_mode_NEAREST:
+        interp_mode = cv::INTER_NEAREST;
+        break;
+      case ResizeParameter_Interp_mode_LANCZOS4:
+        interp_mode = cv::INTER_LANCZOS4;
+        break;
+      default:
+        LOG(FATAL) << "Unknown interp mode.";
+    }
+  }
+
+  cv::Scalar pad_val = cv::Scalar(0, 0, 0);
+  const int img_channels = in_img.channels();
+  if (param.pad_value_size() > 0) {
+    CHECK(param.pad_value_size() == 1 ||
+          param.pad_value_size() == img_channels) <<
+        "Specify either 1 pad_value or as many as channels: " << img_channels;
+    vector<float> pad_values;
+    for (int i = 0; i < param.pad_value_size(); ++i) {
+      pad_values.push_back(param.pad_value(i));
+    }
+    if (img_channels > 1 && param.pad_value_size() == 1) {
+      // Replicate the pad_value for simplicity
+      for (int c = 1; c < img_channels; ++c) {
+        pad_values.push_back(pad_values[0]);
+      }
+    }
+    pad_val = cv::Scalar(pad_values[0], pad_values[1], pad_values[2]);
+  }
+
+  switch (param.resize_mode()) {
+    case ResizeParameter_Resize_mode_WARP:
+      cv::cuda::resize(in_img, out_img, cv::Size(new_width, new_height), 0, 0,
                  interp_mode);
       break;
     case ResizeParameter_Resize_mode_FIT_LARGE_SIZE_AND_PAD:
@@ -548,6 +700,20 @@ cv::Mat ApplyNoise(const cv::Mat& in_img, const NoiseParameter& param) {
   return  out_img;
 }
 
+void RandomBrightness(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float brightness_prob, const float brightness_delta) {
+  float prob;
+  caffe_rng_uniform(1, 0.f, 1.f, &prob);
+  if (prob < brightness_prob) {
+    CHECK_GE(brightness_delta, 0) << "brightness_delta must be non-negative.";
+    float delta;
+    caffe_rng_uniform(1, -brightness_delta, brightness_delta, &delta);
+    AdjustBrightness(in_img, delta, out_img);
+  } else {
+    *out_img = in_img;
+  }
+}
+
 void RandomBrightness(const cv::Mat& in_img, cv::Mat* out_img,
     const float brightness_prob, const float brightness_delta) {
   float prob;
@@ -562,6 +728,16 @@ void RandomBrightness(const cv::Mat& in_img, cv::Mat* out_img,
   }
 }
 
+void AdjustBrightness(const cv::cuda::GpuMat& in_img, const float delta,
+                      cv::cuda::GpuMat* out_img)
+{
+    if (fabs(delta) > 0) {
+      in_img.convertTo(*out_img, -1, 1, delta);
+    } else {
+      *out_img = in_img;
+    }
+}
+
 void AdjustBrightness(const cv::Mat& in_img, const float delta,
                       cv::Mat* out_img) {
   if (fabs(delta) > 0) {
@@ -570,6 +746,23 @@ void AdjustBrightness(const cv::Mat& in_img, const float delta,
     *out_img = in_img;
   }
 }
+
+void RandomContrast(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float contrast_prob, const float lower, const float upper)
+{
+    float prob;
+    caffe_rng_uniform(1, 0.f, 1.f, &prob);
+    if (prob < contrast_prob) {
+      CHECK_GE(upper, lower) << "contrast upper must be >= lower.";
+      CHECK_GE(lower, 0) << "contrast lower must be non-negative.";
+      float delta;
+      caffe_rng_uniform(1, lower, upper, &delta);
+      AdjustContrast(in_img, delta, out_img);
+    } else {
+      *out_img = in_img;
+    }
+}
+
 
 void RandomContrast(const cv::Mat& in_img, cv::Mat* out_img,
     const float contrast_prob, const float lower, const float upper) {
@@ -586,10 +779,34 @@ void RandomContrast(const cv::Mat& in_img, cv::Mat* out_img,
   }
 }
 
+void AdjustContrast(const cv::cuda::GpuMat& in_img, const float delta,
+                    cv::cuda::GpuMat* out_img) {
+  if (fabs(delta - 1.f) > 1e-3) {
+    in_img.convertTo(*out_img, -1, delta, 0);
+  } else {
+    *out_img = in_img;
+  }
+}
+
 void AdjustContrast(const cv::Mat& in_img, const float delta,
                     cv::Mat* out_img) {
   if (fabs(delta - 1.f) > 1e-3) {
     in_img.convertTo(*out_img, -1, delta, 0);
+  } else {
+    *out_img = in_img;
+  }
+}
+
+void RandomSaturation(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float saturation_prob, const float lower, const float upper) {
+  float prob;
+  caffe_rng_uniform(1, 0.f, 1.f, &prob);
+  if (prob < saturation_prob) {
+    CHECK_GE(upper, lower) << "saturation upper must be >= lower.";
+    CHECK_GE(lower, 0) << "saturation lower must be non-negative.";
+    float delta;
+    caffe_rng_uniform(1, lower, upper, &delta);
+    AdjustSaturation(in_img, delta, out_img);
   } else {
     *out_img = in_img;
   }
@@ -605,6 +822,27 @@ void RandomSaturation(const cv::Mat& in_img, cv::Mat* out_img,
     float delta;
     caffe_rng_uniform(1, lower, upper, &delta);
     AdjustSaturation(in_img, delta, out_img);
+  } else {
+    *out_img = in_img;
+  }
+}
+
+void AdjustSaturation(const cv::cuda::GpuMat& in_img, const float delta,
+                      cv::cuda::GpuMat* out_img) {
+  if (fabs(delta - 1.f) != 1e-3) {
+    // Convert to HSV colorspae.
+    cv::cuda::cvtColor(in_img, *out_img, CV_BGR2HSV);
+
+    // Split the image to 3 channels.
+    vector<cv::cuda::GpuMat> channels;
+    cv::cuda::split(*out_img, channels);
+
+    // Adjust the saturation.
+    channels[1].convertTo(channels[1], -1, delta, 0);
+    cv::cuda::merge(channels, *out_img);
+
+    // Back to BGR colorspace.
+    cv::cuda::cvtColor(*out_img, *out_img, CV_HSV2BGR);
   } else {
     *out_img = in_img;
   }
@@ -631,6 +869,20 @@ void AdjustSaturation(const cv::Mat& in_img, const float delta,
   }
 }
 
+void RandomHue(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+               const float hue_prob, const float hue_delta) {
+  float prob;
+  caffe_rng_uniform(1, 0.f, 1.f, &prob);
+  if (prob < hue_prob) {
+    CHECK_GE(hue_delta, 0) << "hue_delta must be non-negative.";
+    float delta;
+    caffe_rng_uniform(1, -hue_delta, hue_delta, &delta);
+    AdjustHue(in_img, delta, out_img);
+  } else {
+    *out_img = in_img;
+  }
+}
+
 void RandomHue(const cv::Mat& in_img, cv::Mat* out_img,
                const float hue_prob, const float hue_delta) {
   float prob;
@@ -640,6 +892,26 @@ void RandomHue(const cv::Mat& in_img, cv::Mat* out_img,
     float delta;
     caffe_rng_uniform(1, -hue_delta, hue_delta, &delta);
     AdjustHue(in_img, delta, out_img);
+  } else {
+    *out_img = in_img;
+  }
+}
+
+void AdjustHue(const cv::cuda::GpuMat& in_img, const float delta, cv::cuda::GpuMat* out_img) {
+  if (fabs(delta) > 0) {
+    // Convert to HSV colorspae.
+    cv::cuda::cvtColor(in_img, *out_img, CV_BGR2HSV);
+
+    // Split the image to 3 channels.
+    vector<cv::cuda::GpuMat> channels;
+    cv::cuda::split(*out_img, channels);
+
+    // Adjust the hue.
+    channels[0].convertTo(channels[0], -1, 1, delta);
+    cv::cuda::merge(channels, *out_img);
+
+    // Back to BGR colorspace.
+    cv::cuda::cvtColor(*out_img, *out_img, CV_HSV2BGR);
   } else {
     *out_img = in_img;
   }
@@ -665,6 +937,24 @@ void AdjustHue(const cv::Mat& in_img, const float delta, cv::Mat* out_img) {
   }
 }
 
+void RandomOrderChannels(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+                         const float random_order_prob) {
+  float prob;
+  caffe_rng_uniform(1, 0.f, 1.f, &prob);
+  if (prob < random_order_prob) {
+    // Split the image to 3 channels.
+    vector<cv::cuda::GpuMat> channels;
+    cv::cuda::split(*out_img, channels);
+    CHECK_EQ(channels.size(), 3);
+
+    // Shuffle the channels.
+    std::random_shuffle(channels.begin(), channels.end());
+    cv::cuda::merge(channels, *out_img);
+  } else {
+    *out_img = in_img;
+  }
+}
+
 void RandomOrderChannels(const cv::Mat& in_img, cv::Mat* out_img,
                          const float random_order_prob) {
   float prob;
@@ -682,7 +972,51 @@ void RandomOrderChannels(const cv::Mat& in_img, cv::Mat* out_img,
     *out_img = in_img;
   }
 }
+cv::cuda::GpuMat ApplyDistort(const cv::cuda::GpuMat& in_img, const DistortionParameter& param) {
+  cv::cuda::GpuMat out_img = in_img;
+  float prob;
+  caffe_rng_uniform(1, 0.f, 1.f, &prob);
 
+  if (prob > 0.5) {
+    // Do random brightness distortion.
+    RandomBrightness(out_img, &out_img, param.brightness_prob(),
+                     param.brightness_delta());
+
+    // Do random contrast distortion.
+    RandomContrast(out_img, &out_img, param.contrast_prob(),
+                   param.contrast_lower(), param.contrast_upper());
+
+    // Do random saturation distortion.
+    RandomSaturation(out_img, &out_img, param.saturation_prob(),
+                     param.saturation_lower(), param.saturation_upper());
+
+    // Do random hue distortion.
+    RandomHue(out_img, &out_img, param.hue_prob(), param.hue_delta());
+
+    // Do random reordering of the channels.
+    RandomOrderChannels(out_img, &out_img, param.random_order_prob());
+  } else {
+    // Do random brightness distortion.
+    RandomBrightness(out_img, &out_img, param.brightness_prob(),
+                     param.brightness_delta());
+
+    // Do random saturation distortion.
+    RandomSaturation(out_img, &out_img, param.saturation_prob(),
+                     param.saturation_lower(), param.saturation_upper());
+
+    // Do random hue distortion.
+    RandomHue(out_img, &out_img, param.hue_prob(), param.hue_delta());
+
+    // Do random contrast distortion.
+    RandomContrast(out_img, &out_img, param.contrast_prob(),
+                   param.contrast_lower(), param.contrast_upper());
+
+    // Do random reordering of the channels.
+    RandomOrderChannels(out_img, &out_img, param.random_order_prob());
+  }
+
+  return out_img;
+}
 cv::Mat ApplyDistort(const cv::Mat& in_img, const DistortionParameter& param) {
   cv::Mat out_img = in_img;
   float prob;

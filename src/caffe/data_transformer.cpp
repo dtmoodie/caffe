@@ -1,6 +1,6 @@
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
-
+#include <opencv2/core/cuda.hpp>
 #include "caffe/util/im_transforms.hpp"
 #endif  // USE_OPENCV
 
@@ -736,9 +736,11 @@ void DataTransformer<Dtype>::DistortImage(const Datum& datum,
       cv_img = DecodeDatumToCVMatNative(datum);
     }
     // Distort the image.
-    cv::Mat distort_img = ApplyDistort(cv_img, param_.distort_param());
+    cv::cuda::GpuMat distort_img =
+            ApplyDistort(cv::cuda::GpuMat(cv_img), param_.distort_param());
+    //cv::Mat distort_img = ApplyDistort(cv_img, param_.distort_param());
     // Save the image into datum.
-    EncodeCVMatToDatum(distort_img, "jpg", distort_datum);
+    EncodeCVMatToDatum(cv::Mat(distort_img), "jpg", distort_datum);
     distort_datum->set_label(datum.label());
     return;
 #else

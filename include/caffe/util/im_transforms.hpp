@@ -45,7 +45,17 @@ cv::Mat AspectKeepingResizeAndPad(const cv::Mat& in_img,
                                   const cv::Scalar pad = cv::Scalar(0, 0, 0),
                                   const int interp_mode = cv::INTER_LINEAR);
 
+cv::cuda::GpuMat AspectKeepingResizeAndPad(const cv::cuda::GpuMat& in_img,
+                                  const int new_width, const int new_height,
+                                  const int pad_type = cv::BORDER_CONSTANT,
+                                  const cv::Scalar pad = cv::Scalar(0, 0, 0),
+                                  const int interp_mode = cv::INTER_LINEAR);
+
 cv::Mat AspectKeepingResizeBySmall(const cv::Mat& in_img,
+                                   const int new_width, const int new_height,
+                                   const int interp_mode = cv::INTER_LINEAR);
+
+cv::cuda::GpuMat AspectKeepingResizeBySmall(const cv::cuda::GpuMat& in_img,
                                    const int new_width, const int new_height,
                                    const int interp_mode = cv::INTER_LINEAR);
 
@@ -53,35 +63,62 @@ void constantNoise(const int n, const vector<uchar>& val, cv::Mat* image);
 
 cv::Mat ApplyResize(const cv::Mat& in_img, const ResizeParameter& param);
 
+cv::cuda::GpuMat ApplyResize(const cv::cuda::GpuMat& in_img, const ResizeParameter& param);
+
 cv::Mat ApplyNoise(const cv::Mat& in_img, const NoiseParameter& param);
 
+void RandomBrightness(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float brightness_prob, const float brightness_delta);
 
 void RandomBrightness(const cv::Mat& in_img, cv::Mat* out_img,
     const float brightness_prob, const float brightness_delta);
 
+void AdjustBrightness(const cv::cuda::GpuMat& in_img, const float delta,
+                      cv::cuda::GpuMat* out_img);
+
 void AdjustBrightness(const cv::Mat& in_img, const float delta,
                       cv::Mat* out_img);
+
+void RandomContrast(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float contrast_prob, const float lower, const float upper);
 
 void RandomContrast(const cv::Mat& in_img, cv::Mat* out_img,
     const float contrast_prob, const float lower, const float upper);
 
+void AdjustContrast(const cv::cuda::GpuMat& in_img, const float delta,
+                    cv::cuda::GpuMat* out_img);
+
 void AdjustContrast(const cv::Mat& in_img, const float delta,
                     cv::Mat* out_img);
+
+void RandomSaturation(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+    const float saturation_prob, const float lower, const float upper);
 
 void RandomSaturation(const cv::Mat& in_img, cv::Mat* out_img,
     const float saturation_prob, const float lower, const float upper);
 
+void AdjustSaturation(const cv::cuda::GpuMat& in_img, const float delta,
+                      cv::cuda::GpuMat* out_img);
+
 void AdjustSaturation(const cv::Mat& in_img, const float delta,
                       cv::Mat* out_img);
+
+void RandomHue(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+               const float hue_prob, const float hue_delta);
 
 void RandomHue(const cv::Mat& in_img, cv::Mat* out_img,
                const float hue_prob, const float hue_delta);
 
+void AdjustHue(const cv::cuda::GpuMat& in_img, const float delta, cv::cuda::GpuMat* out_img);
 void AdjustHue(const cv::Mat& in_img, const float delta, cv::Mat* out_img);
+
+void RandomOrderChannels(const cv::cuda::GpuMat& in_img, cv::cuda::GpuMat* out_img,
+                         const float random_order_prob);
 
 void RandomOrderChannels(const cv::Mat& in_img, cv::Mat* out_img,
                          const float random_order_prob);
 
+cv::cuda::GpuMat ApplyDistort(const cv::cuda::GpuMat& in_img, const DistortionParameter& param);
 cv::Mat ApplyDistort(const cv::Mat& in_img, const DistortionParameter& param);
 #endif  // USE_OPENCV
 
