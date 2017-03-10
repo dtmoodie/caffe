@@ -670,7 +670,23 @@ cv::Mat DatumToCVMatNative(const Datum& datum)
   cv::Mat cv_img;
   const string& data = datum.data();
   cv_img.create(datum.height(), datum.width(), CV_MAKE_TYPE(CV_8U, datum.channels()));
-  memcpy(cv_img.data, data.data(), data.size());
+  //memcpy(cv_img.data, data.data(), data.size());
+  const int width = cv_img.cols;
+  const int height = cv_img.rows;
+  const int channels = cv_img.channels();
+  for(int h = 0; h < height; ++h)
+  {
+      uchar* img_ptr = cv_img.ptr<uchar>(h);
+      for(int w = 0; w < width; ++w)
+      {
+        for(int c = 0; c < channels; ++c)
+        {
+            int datum_index = (c * height + h) * width + w;
+            img_ptr[0] = data.data()[datum_index];
+            ++img_ptr;
+        }
+      }
+  }
   return cv_img;
 }
 
