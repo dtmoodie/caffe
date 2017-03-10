@@ -370,21 +370,23 @@ void DataTransformer<Dtype>::Transform(const Datum& datum,
   const int width = transformed_blob->width();
   const int num = transformed_blob->num();
 
-  CHECK_EQ(channels, datum_channels);
-  CHECK_LE(height, datum_height);
-  CHECK_LE(width, datum_width);
-  CHECK_GE(num, 1);
+  //CHECK_EQ(channels, datum_channels);
+  //CHECK_LE(height, datum_height);
+  //CHECK_LE(width, datum_width);
+  //CHECK_GE(num, 1);
 
-  if (crop_size) {
+  /*if (crop_size) {
     CHECK_EQ(crop_size, height);
     CHECK_EQ(crop_size, width);
   } else {
     CHECK_EQ(datum_height, height);
     CHECK_EQ(datum_width, width);
-  }
+  }*/
 
-  Dtype* transformed_data = transformed_blob->mutable_cpu_data();
-  Transform(datum, transformed_data, crop_bbox, do_mirror);
+  //Dtype* transformed_data = transformed_blob->mutable_cpu_data();
+  //Transform(datum, transformed_data, crop_bbox, do_mirror);
+  cv::Mat cv_img = DatumToCVMatNative(datum);
+  return Transform(cv_img, transformed_blob, crop_bbox, do_mirror);
 }
 
 template<typename Dtype>
@@ -628,7 +630,7 @@ void DataTransformer<Dtype>::ExpandImage(const Datum& datum,
     cv::Mat expand_img;
     ExpandImage(cv_img, expand_ratio, expand_bbox, &expand_img);
     // Save the image into datum.
-    EncodeCVMatToDatum(expand_img, "jpg", expand_datum);
+    CVMatToDatum(expand_img, expand_datum);
     expand_datum->set_label(datum.label());
     return;
 #else
