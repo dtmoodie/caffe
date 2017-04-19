@@ -295,4 +295,12 @@ if(APPLE)
   endif()
 endif()
 
-list(APPEND Caffe_LINKER_LIBS "nvToolsExt")
+
+IF(MSVC)
+  FIND_PACKAGE(NVToolsExt REQUIRED)
+  INCLUDE_DIRECTORIES(${NV_TOOLS_EXT_INCLUDE_DIR})
+  link_directories(${NV_TOOLS_EXT_LIB_DIR})
+  list(APPEND Caffe_LINKER_LIBS "${NV_TOOLS_EXT_LIB}")
+else()
+	list(APPEND Caffe_LINKER_LIBS "nvToolsExt")
+ENDIF()
