@@ -9,7 +9,7 @@
 
 namespace caffe {
 
-const float kLOG_THRESHOLD = 1e-20;
+#define kLOG_THRESHOLD 1e-20
 
 /**
  * @brief An interface for Layer%s that take two Blob%s as input -- usually

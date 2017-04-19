@@ -43,7 +43,7 @@ void __global__  seginfo_gain_loss_forward_kernel(const Dtype* label, const int 
             {
                 atomicAdd(loss, -(infogain_mat[label_value * numLabels + k] *
                         log(max(prob_data[i * dim + k * inner_num_ + j],
-                            Dtype(caffe::kLOG_THRESHOLD)))));
+                            Dtype(kLOG_THRESHOLD)))));
             }
             atomicAdd(count, (Dtype)1.0);
         }
